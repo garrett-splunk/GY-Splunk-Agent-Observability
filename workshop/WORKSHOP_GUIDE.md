@@ -28,7 +28,8 @@ Adjust: skip Exercises 5–6 for shorter sessions; run hallucination demo even i
 
 | Component | File | Outcome |
 |-----------|------|---------|
-| Env bootstrap | `setup_env.py` | `GALILEO_*` env vars from secrets |
+| Project + log stream | `config.yaml` | Names match Galileo console; drive trace routing |
+| Env bootstrap | `setup_env.py` | `GALILEO_*` env vars from secrets + config |
 | Session logger | `app.py` | Per-tab `GalileoLogger` + `start_session` |
 | Auto spans | `agent.py` | `GalileoCallback` on LangGraph |
 | Trace boundary | `trace_lifecycle.py` | `start_trace` / `conclude` / `flush` |
@@ -41,7 +42,8 @@ Adjust: skip Exercises 5–6 for shorter sessions; run hallucination demo even i
 - [ ] Python 3.10+ on participant machines
 - [ ] Ollama installed with `gemma4` pulled **or** OpenAI keys for hosted mode
 - [ ] Galileo API keys issued (ingest scope)
-- [ ] Galileo project `galileo-lab-it-helpdesk` (or edit `config.yaml`)
+- [ ] Participants know how to create a **Galileo project** and **log stream** (Step 3.3) and set names in `config.yaml` (Step 3.4)
+- [ ] Facilitator project ready — default `galileo-lab-it-helpdesk` / `default` or custom names documented for the room
 - [ ] Repo cloned locally (`GY-Splunk-Agent-Observability` or equivalent path)
 - [ ] Facilitator tested: hallucination button + one chat query with full instrumentation
 
@@ -64,10 +66,10 @@ cd workshop && python3 -m http.server 8095
 streamlit run app.py
 ```
 
-Verify env:
+Verify env (after editing `config.yaml`):
 
 ```bash
-python -c "from setup_env import setup_environment; setup_environment(); import os; print(os.environ.get('GALILEO_PROJECT'))"
+python -c "from setup_env import setup_environment; setup_environment(); import os; print('project:', os.environ.get('GALILEO_PROJECT')); print('log_stream:', os.environ.get('GALILEO_LOG_STREAM'))"
 ```
 
 ---
@@ -103,7 +105,8 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 | Sidebar: Galileo not configured | Add `galileo_api_key` to secrets.toml, restart Streamlit |
 | Ollama connection error | `ollama serve`, `ollama pull gemma4` |
 | No agent traces | Complete Exercises 2–4; check callback flags |
-| Hallucination fails, chat works | API key missing or wrong project name |
+| Hallucination fails, chat works | API key missing, or `config.yaml` project/log_stream names do not match Galileo console |
+| Traces in wrong project | `galileo.project` / `log_stream` in `config.yaml` typo — must match console exactly |
 | Duplicate root traces | `start_new_trace=True` on callback — must be `False` |
 
 ---

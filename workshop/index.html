@@ -217,22 +217,58 @@ python3 -m http.server 8095
         <h3>3.2 — Edit secrets</h3>
         <p>Set at minimum:</p>
         <ul>
-          <li><code>galileo_api_key</code> — from Galileo console</li>
+          <li><code>galileo_api_key</code> — from Galileo console (<strong>Settings → API keys</strong>)</li>
           <li><code>galileo_console_url</code> — your Galileo instance URL</li>
           <li><code>openai_api_key</code> — if using Hosted provider (optional if using Ollama)</li>
         </ul>
 
-        <h3>3.3 — Verify environment (Exercise 1)</h3>
-        <p>When the API key is set, <code>setup_env.py</code> loads <code>GALILEO_PROJECT</code> from <code>config.yaml</code>.</p>
+        <h3>3.3 — Create a Galileo project and log stream (Exercise 1a)</h3>
+        <p>Traces from this lab are organized by <strong>project</strong> and <strong>log stream</strong> in Galileo. Create both in the console before you wire instrumentation.</p>
+        <ol>
+          <li>Open your Galileo console (same base URL as <code>galileo_console_url</code> in secrets).</li>
+          <li><strong>Projects</strong> → <strong>New project</strong> / <strong>Create project</strong> — e.g. <code>galileo-lab-it-helpdesk</code> or <code>your-name-it-helpdesk-lab</code>.</li>
+          <li>Open that project → <strong>Log streams</strong> → create a stream — e.g. <code>default</code> or <code>it-helpdesk-lab</code>.</li>
+          <li>Write down the <strong>exact</strong> project name and log stream name (case-sensitive).</li>
+        </ol>
+        <div class="callout callout--info">
+          <p class="callout__title">Lab defaults</p>
+          <div class="callout__body">
+            <p>If you create project <code>galileo-lab-it-helpdesk</code> and log stream <code>default</code>, you can keep the shipped <code>config.yaml</code> as-is.</p>
+          </div>
+        </div>
+
+        <h3>3.4 — Point the app at your project (Exercise 1b)</h3>
+        <p>Edit <code>config.yaml</code> so the app sends traces to your project and log stream:</p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-3-4-open">Copy</button>
+          </div>
+          <pre><code id="cmd-3-4-open">open -a Cursor config.yaml</code></pre>
+        </div>
+        <p>Set <code>galileo.project</code> and <code>galileo.log_stream</code> to match the console:</p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">config.yaml</span>
+            <button type="button" class="btn-copy" data-copy="cmd-3-4-yaml">Copy</button>
+          </div>
+          <pre><code id="cmd-3-4-yaml">galileo:
+  project: "galileo-lab-it-helpdesk"   # your Galileo project name
+  log_stream: "default"                # your log stream name</code></pre>
+        </div>
+        <p><code>setup_env.py</code> reads these values into <code>GALILEO_PROJECT</code> and <code>GALILEO_LOG_STREAM</code>. Exercise 2 passes the same names to <code>GalileoLogger</code>. The Streamlit sidebar displays them once the app is running.</p>
+
+        <h3>3.5 — Verify environment (Exercise 1c)</h3>
+        <p>When the API key is set, <code>setup_env.py</code> loads project and log stream from <code>config.yaml</code>.</p>
         <div class="code-block">
           <div class="code-block__header">
             <span class="code-block__file">terminal</span>
             <button type="button" class="btn-copy" data-copy="cmd-3-3">Copy</button>
           </div>
           <pre><code id="cmd-3-3">source venv/bin/activate
-python -c "from setup_env import setup_environment; setup_environment(); import os; print('project:', os.environ.get('GALILEO_PROJECT'))"</code></pre>
+python -c "from setup_env import setup_environment; setup_environment(); import os; print('project:', os.environ.get('GALILEO_PROJECT')); print('log_stream:', os.environ.get('GALILEO_LOG_STREAM'))"</code></pre>
         </div>
-        <p>Expected: <code>project: galileo-lab-it-helpdesk</code></p>
+        <p>Expected (lab defaults): <code>project: galileo-lab-it-helpdesk</code> and <code>log_stream: default</code></p>
       </section>
 
       <section id="step-run">
@@ -277,9 +313,14 @@ streamlit run app.py</code></pre>
           </div>
         </div>
 
-        <h3>Exercise 1 — Verify <code>setup_env.py</code> (Step 3.3)</h3>
-        <p>No code changes needed if <code>galileo_api_key</code> is set in <code>secrets.toml</code>. Exercise 1 is complete when Step 3.3 prints <code>project: galileo-lab-it-helpdesk</code>.</p>
-        <p>Optional — open and inspect:</p>
+        <h3>Exercise 1 — Project, log stream, and <code>setup_env.py</code> (Steps 3.3–3.5)</h3>
+        <p>Complete Exercise 1 in Step 3 before wiring the logger:</p>
+        <ul>
+          <li><strong>3.3</strong> — Create a Galileo project and log stream in the console</li>
+          <li><strong>3.4</strong> — Set <code>galileo.project</code> and <code>galileo.log_stream</code> in <code>config.yaml</code></li>
+          <li><strong>3.5</strong> — Verify env vars print the same names</li>
+        </ul>
+        <p>Optional — inspect how config becomes env vars:</p>
         <div class="code-block">
           <div class="code-block__header">
             <span class="code-block__file">terminal</span>
@@ -287,7 +328,7 @@ streamlit run app.py</code></pre>
           </div>
           <pre><code id="cmd-ex1-open">open -a Cursor setup_env.py</code></pre>
         </div>
-        <p>Look at lines <strong>65–78</strong>: when your API key is valid, <code>GALILEO_API_KEY</code>, <code>GALILEO_PROJECT</code>, and <code>GALILEO_LOG_STREAM</code> are added to <code>env_vars</code> automatically.</p>
+        <p>Look at lines <strong>50–52</strong> (read from <code>config.yaml</code>) and <strong>65–78</strong> (export <code>GALILEO_*</code> when your API key is valid). No code changes required if secrets and config are set.</p>
 
         <h3>Exercise 2 — Wire session logger in <code>app.py</code></h3>
 
@@ -560,10 +601,10 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
           <span class="step-time">~5 min</span>
         </div>
         <h2>Verify in Galileo</h2>
-        <p>Complete this checklist in the Galileo console:</p>
+        <p>Complete this checklist in the Galileo console (open the project and log stream you set in <code>config.yaml</code>):</p>
         <ul class="checklist">
-          <li>Project: <code>galileo-lab-it-helpdesk</code></li>
-          <li>Log stream: <code>default</code></li>
+          <li>Project matches <code>galileo.project</code> in <code>config.yaml</code></li>
+          <li>Log stream matches <code>galileo.log_stream</code></li>
           <li>Live agent trace: root → LLM → tool → LLM</li>
           <li>Hallucination trace: retriever + LLM mismatch</li>
           <li>Injection trace: full malicious prompt in input</li>
@@ -593,7 +634,8 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
             <tr><td>Duplicate root traces</td><td><code>GalileoCallback(start_new_trace=False)</code></td></tr>
             <tr><td>LLM spans, no tool spans</td><td>Attach callback in <code>agent.py</code> (Exercise 3)</td></tr>
             <tr><td>Ollama errors</td><td><code>ollama serve</code> and <code>ollama pull gemma4</code></td></tr>
-            <tr><td>Hallucination button fails</td><td>API key or project name in <code>config.yaml</code></td></tr>
+            <tr><td>Hallucination button fails</td><td>API key, or <code>config.yaml</code> project/log_stream names do not match Galileo console</td></tr>
+            <tr><td>Traces in wrong project</td><td>Fix <code>galileo.project</code> / <code>log_stream</code> in <code>config.yaml</code>; restart Streamlit</td></tr>
           </tbody>
         </table>
       </section>

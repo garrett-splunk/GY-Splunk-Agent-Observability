@@ -47,23 +47,71 @@ In Cursor:
 
 ---
 
-## Exercise 1 — Environment bootstrap
+## Exercise 1 — Galileo project, log stream, and environment bootstrap
 
-**File:** `setup_env.py`  
+**Goal:** Create a Galileo project and log stream, point the lab at them in `config.yaml`, and confirm `setup_env.py` exports the right environment variables.
+
+### Step 1a — Create a project and log stream in Galileo
+
+1. Open your Galileo console (same URL as `galileo_console_url` in `.streamlit/secrets.toml`, e.g. `https://app.galileo.ai`).
+2. **Create a project** (wording may vary by UI version):
+   - Go to **Projects** → **New project** / **Create project**
+   - Name it something memorable, e.g. `galileo-lab-it-helpdesk` or `your-name-it-helpdesk-lab`
+   - Save / create the project
+3. **Open the project**, then create or select a **log stream**:
+   - Go to **Log streams** (or **Observability** → **Log streams**)
+   - Create a new stream, e.g. `default` or `it-helpdesk-lab`
+   - Note the **exact** project name and log stream name — they must match `config.yaml` character-for-character
+4. If you have not already, copy your **API key** from **Settings** → **API keys** (or your org’s equivalent) into `.streamlit/secrets.toml` as `galileo_api_key`.
+
+**Tip:** You can reuse the lab defaults (`galileo-lab-it-helpdesk` + `default`) if you create a project and stream with those exact names.
+
+### Step 1b — Point the app at your project and log stream
+
+**File:** `config.yaml`  
+**Open:** `open -a Cursor config.yaml`
+
+Edit the `galileo` block so `project` and `log_stream` match what you created in the console:
+
+```yaml
+galileo:
+  project: "galileo-lab-it-helpdesk"   # your Galileo project name
+  log_stream: "default"                # your log stream name
+```
+
+Save the file. No code changes are required in `setup_env.py` — it already reads these values (lines **50–52**, **72–73**).
+
+**Data flow:**
+
+| Source | Variable / usage |
+|--------|------------------|
+| `config.yaml` → `galileo.project` | `GALILEO_PROJECT` env var |
+| `config.yaml` → `galileo.log_stream` | `GALILEO_LOG_STREAM` env var |
+| Exercise 2 `GalileoLogger(...)` | Same names passed to the SDK |
+| Streamlit sidebar | Displays project + log stream from config |
+
+### Step 1c — Verify environment bootstrap
+
+**File:** `setup_env.py` (optional inspect)  
 **Open:** `open -a Cursor setup_env.py`
 
-**Goal:** Galileo credentials load into environment variables.
-
-**Steps:** No code changes if `galileo_api_key` is set in `.streamlit/secrets.toml`. Inspect lines **65–78** — valid keys add `GALILEO_API_KEY`, `GALILEO_PROJECT`, and `GALILEO_LOG_STREAM` automatically.
+When `galileo_api_key` is set in `.streamlit/secrets.toml`, lines **65–78** add `GALILEO_API_KEY`, `GALILEO_PROJECT`, and `GALILEO_LOG_STREAM` automatically.
 
 **Verify:**
 
 ```bash
 source venv/bin/activate
-python -c "from setup_env import setup_environment; setup_environment(); import os; print(os.environ.get('GALILEO_PROJECT'))"
+python -c "from setup_env import setup_environment; setup_environment(); import os; print('project:', os.environ.get('GALILEO_PROJECT')); print('log_stream:', os.environ.get('GALILEO_LOG_STREAM'))"
 ```
 
-Expected: `galileo-lab-it-helpdesk`
+Expected (if you kept lab defaults):
+
+```
+project: galileo-lab-it-helpdesk
+log_stream: default
+```
+
+After `streamlit run app.py`, the sidebar should show the same project and log stream. Traces from Exercises 2–4 and demo scenarios land in that log stream in the Galileo console.
 
 ---
 

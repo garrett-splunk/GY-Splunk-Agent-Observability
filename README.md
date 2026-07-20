@@ -62,7 +62,7 @@ Follow [`INSTRUMENTATION.md`](INSTRUMENTATION.md) — seven exercises from env s
 
 | Exercise | File | What you wire |
 |----------|------|---------------|
-| 1 | `setup_env.py` | `GALILEO_*` environment variables |
+| 1 | `config.yaml` + `setup_env.py` | Galileo project/log stream + `GALILEO_*` env vars |
 | 2 | `app.py` | Per-session `GalileoLogger` + `start_session` |
 | 3 | `agent.py` | `GalileoCallback` on graph invoke |
 | 4 | `agent.py` + `helpers/trace_lifecycle.py` | `ensure_trace_started` / `finalize_trace` |
