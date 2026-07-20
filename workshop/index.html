@@ -260,23 +260,98 @@ streamlit run app.py</code></pre>
           <span class="step-time">~10 min</span>
         </div>
         <h2>Instrument: environment + session logger</h2>
-        <p>Complete <strong>Exercises 1–2</strong> in <code>INSTRUMENTATION.md</code>. Search for <code># INSTRUMENTATION</code> in the repo.</p>
+        <p>Complete <strong>Exercises 1–2</strong>. Each exercise below shows how to <strong>open the file in Cursor</strong> and exactly which lines to add or uncomment.</p>
 
-        <h3>Exercise 1 — <code>setup_env.py</code></h3>
-        <p>Confirm <code>GALILEO_*</code> env vars are set when API key is present (auto-wired if secrets are configured).</p>
+        <div class="callout callout--info">
+          <p class="callout__title">Open any lab file in Cursor (macOS)</p>
+          <div class="callout__body">
+            <p>From the lab root, replace <code>FILENAME</code> with the file you are editing:</p>
+            <pre><code>cd ~/Desktop/galileo-assistant-lab
+open -a Cursor FILENAME</code></pre>
+            <p>In Cursor, press <code>Cmd+F</code> and search for <code># INSTRUMENTATION</code> to jump to each exercise block. Save with <code>Cmd+S</code>.</p>
+          </div>
+        </div>
 
-        <h3>Exercise 2 — <code>app.py</code></h3>
-        <ol>
-          <li>Uncomment <code>from galileo import GalileoLogger</code></li>
-          <li>Implement <code>_create_galileo_logger()</code> (see comment block)</li>
-          <li>Implement <code>_start_galileo_session_if_needed()</code> (see comment block)</li>
-        </ol>
-        <p><strong>Reference:</strong> <code>galileo-golden-demo/app.py</code> lines ~304–317 and ~1024–1076</p>
+        <h3>Exercise 1 — Verify <code>setup_env.py</code> (Step 3.3)</h3>
+        <p>No code changes needed if <code>galileo_api_key</code> is set in <code>secrets.toml</code>. Exercise 1 is complete when Step 3.3 prints <code>project: galileo-lab-it-helpdesk</code>.</p>
+        <p>Optional — open and inspect:</p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-ex1-open">Copy</button>
+          </div>
+          <pre><code id="cmd-ex1-open">open -a Cursor setup_env.py</code></pre>
+        </div>
+        <p>Look at lines <strong>65–78</strong>: when your API key is valid, <code>GALILEO_API_KEY</code>, <code>GALILEO_PROJECT</code>, and <code>GALILEO_LOG_STREAM</code> are added to <code>env_vars</code> automatically.</p>
+
+        <h3>Exercise 2 — Wire session logger in <code>app.py</code></h3>
+
+        <p><strong>2a — Open the file</strong></p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-ex2-open">Copy</button>
+          </div>
+          <pre><code id="cmd-ex2-open">open -a Cursor app.py</code></pre>
+        </div>
+
+        <p><strong>2b — Uncomment the import (line ~23)</strong></p>
+        <p>Find <code># INSTRUMENTATION (Exercise 2): uncomment when wiring per-session logger</code></p>
+        <p>Change this:</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__file">app.py · before</span></div>
+          <pre><code># from galileo import GalileoLogger</code></pre>
+        </div>
+        <p>To this (remove the leading <code>#</code>):</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__file">app.py · after</span></div>
+          <pre><code>from galileo import GalileoLogger</code></pre>
+        </div>
+        <p class="muted">Leave the next commented line (<code>create_galileo_logger</code>) as-is — you do not need it for this exercise.</p>
+
+        <p><strong>2c — Replace <code>_create_galileo_logger</code> (lines ~40–52)</strong></p>
+        <p>Delete the docstring (<code>""" ... """</code>) and the placeholder lines <code>_ = config</code> / <code>return None</code>. The function should look exactly like this:</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__file">app.py · paste this function body</span></div>
+          <pre><code>def _create_galileo_logger(config: Dict[str, Any]):
+    galileo_cfg = config.get("galileo", {})
+    project = galileo_cfg.get("project", "galileo-lab-it-helpdesk")
+    log_stream = galileo_cfg.get("log_stream", "default")
+    if not os.environ.get("GALILEO_API_KEY"):
+        return None
+    return GalileoLogger(project=project, log_stream=log_stream)</code></pre>
+        </div>
+
+        <p><strong>2d — Replace <code>_start_galileo_session_if_needed</code> (lines ~55–69)</strong></p>
+        <p>Same pattern: remove the docstring wrapper and <code>_ = config</code>. Use exactly:</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__file">app.py · paste this function body</span></div>
+          <pre><code>def _start_galileo_session_if_needed(config: Dict[str, Any]) -> None:
+    logger = st.session_state.get("galileo_logger")
+    if logger and not st.session_state.galileo_session_started:
+        ui = config.get("ui", {})
+        title = ui.get("app_title", "IT Helpdesk Assistant Lab")
+        logger.start_session(
+            name=f"{title} Demo",
+            external_id=st.session_state.session_id,
+        )
+        st.session_state.galileo_session_started = True</code></pre>
+        </div>
+
+        <p><strong>2e — Save and restart Streamlit</strong></p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-ex2-restart">Copy</button>
+          </div>
+          <pre><code id="cmd-ex2-restart"># In the terminal running Streamlit, press Ctrl+C, then:
+streamlit run app.py</code></pre>
+        </div>
 
         <div class="callout callout--info">
           <p class="callout__title">Checkpoint</p>
           <div class="callout__body">
-            <p>Restart Streamlit. Sidebar should show <strong>Galileo API key loaded</strong>. Send a chat message — a new session should appear in Galileo console.</p>
+            <p>Sidebar shows <strong>Galileo API key loaded</strong>. Send a chat message — a new session named like <code>IT Helpdesk Assistant Lab Demo</code> appears in the Galileo console.</p>
           </div>
         </div>
       </section>
@@ -287,22 +362,97 @@ streamlit run app.py</code></pre>
           <span class="step-time">~15 min</span>
         </div>
         <h2>Instrument: callback + trace lifecycle</h2>
-        <p>Complete <strong>Exercises 3–4</strong>. This wires automatic LLM/tool spans and a root trace per chat turn.</p>
+        <p>Complete <strong>Exercises 3–4</strong> (and optional 5–6 below).</p>
 
-        <h3>Exercise 3 — <code>agent.py</code></h3>
-        <ol>
-          <li>Uncomment <code>GalileoCallback</code> import</li>
-          <li>Replace <code>self.invoke_config</code> with the commented version including <code>callbacks</code></li>
-          <li>Keep <code>start_new_trace=False</code> and <code>flush_on_chain_end=False</code></li>
-        </ol>
+        <h3>Exercise 3 — Attach <code>GalileoCallback</code> in <code>agent.py</code></h3>
 
-        <h3>Exercise 4 — <code>helpers/trace_lifecycle.py</code></h3>
-        <ol>
-          <li>Uncomment bodies of <code>ensure_trace_started()</code> and <code>finalize_trace()</code></li>
-          <li>Calls in <code>agent.py</code> are already in place</li>
-        </ol>
+        <p><strong>3a — Open the file</strong></p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-ex3-open">Copy</button>
+          </div>
+          <pre><code id="cmd-ex3-open">open -a Cursor agent.py</code></pre>
+        </div>
 
-        <p><strong>Reference:</strong> <code>galileo-golden-demo/agent_frameworks/langgraph/agent.py</code> and <code>helpers/agent_control_helpers.py</code></p>
+        <p><strong>3b — Uncomment the import (line ~25)</strong></p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__file">agent.py · before → after</span></div>
+          <pre><code># from galileo.handlers.langchain import GalileoCallback
+from galileo.handlers.langchain import GalileoCallback</code></pre>
+        </div>
+
+        <p><strong>3c — Replace <code>self.invoke_config</code> (lines ~60–72)</strong></p>
+        <p>Find <code># INSTRUMENTATION (Exercise 3): build callbacks list with GalileoCallback</code></p>
+        <p>Delete (or comment out) this single line:</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__file">agent.py · remove</span></div>
+          <pre><code>self.invoke_config = {"configurable": {"thread_id": self.session_id}}</code></pre>
+        </div>
+        <p>Uncomment the block above it so <code>__init__</code> contains exactly:</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__file">agent.py · inside ITHelpdeskAgent.__init__</span></div>
+          <pre><code>        callbacks = [
+            GalileoCallback(
+                galileo_logger=galileo_logger,
+                start_new_trace=False,
+                flush_on_chain_end=False,
+            )
+        ]
+        self.invoke_config = {
+            "configurable": {"thread_id": self.session_id},
+            "callbacks": callbacks,
+        }</code></pre>
+        </div>
+
+        <h3>Exercise 4 — Enable trace lifecycle in <code>helpers/trace_lifecycle.py</code></h3>
+
+        <p><strong>4a — Open the file</strong></p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-ex4-open">Copy</button>
+          </div>
+          <pre><code id="cmd-ex4-open">open -a Cursor helpers/trace_lifecycle.py</code></pre>
+        </div>
+
+        <p><strong>4b — Replace <code>ensure_trace_started</code></strong></p>
+        <p>Remove the docstring and the placeholder line <code>_ = (galileo_logger, ...)</code>. The function body should be:</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__file">helpers/trace_lifecycle.py</span></div>
+          <pre><code>def ensure_trace_started(
+    galileo_logger,
+    messages=None,
+    *,
+    trace_input: Optional[str] = None,
+    trace_name: str = "Run Agent",
+) -> None:
+    if not galileo_logger or galileo_logger.current_parent() is not None:
+        return
+    if trace_input is None and messages is not None:
+        trace_input = _extract_trace_input(messages)
+    galileo_logger.start_trace(input=trace_input or "", name=trace_name)</code></pre>
+        </div>
+
+        <p><strong>4c — Replace <code>finalize_trace</code></strong></p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__file">helpers/trace_lifecycle.py</span></div>
+          <pre><code>def finalize_trace(galileo_logger, output: str) -> None:
+    if not galileo_logger or galileo_logger.current_parent() is None:
+        return
+    galileo_logger.conclude(output=output)
+    galileo_logger.flush()</code></pre>
+        </div>
+        <p class="muted"><code>agent.py</code> already calls these functions — no changes needed there (lines ~133–151).</p>
+
+        <p><strong>4d — Save and restart Streamlit</strong></p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-ex4-restart">Copy</button>
+          </div>
+          <pre><code id="cmd-ex4-restart">streamlit run app.py</code></pre>
+        </div>
 
         <div class="callout callout--info">
           <p class="callout__title">Checkpoint</p>
@@ -311,11 +461,39 @@ streamlit run app.py</code></pre>
           </div>
         </div>
 
-        <h3>Optional: Exercises 5–6</h3>
-        <ul>
-          <li><strong>Exercise 5</strong> — Named LLM spans in <code>helpers/llm.py</code> (already set; verify labels)</li>
-          <li><strong>Exercise 6</strong> — Manual <code>add_tool_span</code> in <code>tools.py</code></li>
-        </ul>
+        <h3>Exercise 5 — Named LLM spans (verify only)</h3>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-ex5-open">Copy</button>
+          </div>
+          <pre><code id="cmd-ex5-open">open -a Cursor helpers/llm.py</code></pre>
+        </div>
+        <p>Confirm lines ~34 and ~44 already pass <code>name=name</code> to <code>ChatOpenAI</code> / <code>ChatOllama</code>. After Exercise 3, LLM spans in Galileo should show <strong>IT Helpdesk Assistant</strong>.</p>
+
+        <h3>Exercise 6 — Manual tool spans (optional)</h3>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-ex6-open">Copy</button>
+          </div>
+          <pre><code id="cmd-ex6-open">open -a Cursor tools.py</code></pre>
+        </div>
+        <p>In <code>_log_tool_span</code> (~line 31), remove the docstring wrapper and placeholder. Use exactly:</p>
+        <div class="code-block">
+          <div class="code-block__header"><span class="code-block__file">tools.py</span></div>
+          <pre><code>def _log_tool_span(name: str, tool_input: str, tool_output: str, duration_ns: int) -> None:
+    if not _galileo_logger:
+        return
+    _galileo_logger.add_tool_span(
+        input=tool_input,
+        output=tool_output,
+        name=name,
+        duration_ns=duration_ns,
+        status_code=200,
+    )</code></pre>
+        </div>
+        <p class="muted">May duplicate spans already captured by <code>GalileoCallback</code> — useful for demo visibility only.</p>
       </section>
 
       <section id="step-demo-happy">

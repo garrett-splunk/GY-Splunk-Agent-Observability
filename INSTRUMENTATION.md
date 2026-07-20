@@ -1,28 +1,50 @@
 # Instrumentation Lab Guide
 
-Practice wiring Galileo SDK observability into the IT Helpdesk assistant. Each exercise maps to commented `# INSTRUMENTATION:` blocks in the codebase.
+Practice wiring Galileo SDK observability into the IT Helpdesk assistant. Each exercise maps to `# INSTRUMENTATION:` blocks in the codebase.
 
-Reference implementation: [`~/Desktop/galileo-golden-demo`](../galileo-golden-demo)
+**Workshop site (with copy buttons):** https://garrett-splunk.github.io/GY-Splunk-Agent-Observability/
+
+Reference implementation: `~/Desktop/galileo-golden-demo`
+
+---
+
+## How to open lab files in Cursor
+
+From the lab root:
+
+```bash
+cd ~/Desktop/galileo-assistant-lab
+open -a Cursor FILENAME
+```
+
+Examples:
+
+```bash
+open -a Cursor app.py
+open -a Cursor agent.py
+open -a Cursor helpers/trace_lifecycle.py
+open -a Cursor tools.py
+```
+
+In Cursor:
+
+1. Press `Cmd+F` and search for `# INSTRUMENTATION`
+2. Make the edits below
+3. Save with `Cmd+S`
+4. Restart Streamlit after each exercise block (`Ctrl+C`, then `streamlit run app.py`)
 
 ---
 
 ## Exercise 1 — Environment bootstrap
 
-**File:** [`setup_env.py`](setup_env.py)
+**File:** `setup_env.py`  
+**Open:** `open -a Cursor setup_env.py`
 
-**Goal:** Load Galileo credentials from `.streamlit/secrets.toml` into environment variables.
+**Goal:** Galileo credentials load into environment variables.
 
-**What to verify:** When `galileo_api_key` is set in secrets, these env vars should be present at runtime:
+**Steps:** No code changes if `galileo_api_key` is set in `.streamlit/secrets.toml`. Inspect lines **65–78** — valid keys add `GALILEO_API_KEY`, `GALILEO_PROJECT`, and `GALILEO_LOG_STREAM` automatically.
 
-- `GALILEO_API_KEY`
-- `GALILEO_API_URL` (derived from console URL if omitted)
-- `GALILEO_CONSOLE_URL`
-- `GALILEO_PROJECT` (from `config.yaml`)
-- `GALILEO_LOG_STREAM` (from `config.yaml`)
-
-**Reference:** `galileo-golden-demo/setup_env.py` lines 56–140
-
-**Check:**
+**Verify:**
 
 ```bash
 source venv/bin/activate
@@ -35,37 +57,120 @@ Expected: `galileo-lab-it-helpdesk`
 
 ## Exercise 2 — Per-session logger
 
-**File:** [`app.py`](app.py)
+**File:** `app.py`  
+**Open:** `open -a Cursor app.py`
 
-**Goal:** One `GalileoLogger` per browser tab; `start_session` on first user message.
+### Step 2a — Uncomment import (~line 23)
 
-**Steps:**
+Find `# INSTRUMENTATION (Exercise 2)`.
 
-1. Uncomment `from galileo import GalileoLogger` import
-2. Implement `_create_galileo_logger()` body (see comment block)
-3. Implement `_start_galileo_session_if_needed()` body (see comment block)
+**Before:**
 
-**Reference:** `galileo-golden-demo/app.py` ~1024–1076 (logger creation), ~304–317 (session start)
+```python
+# from galileo import GalileoLogger
+```
 
-**Check:** Send a chat message → Galileo console shows a new session named like `IT Helpdesk Assistant Lab Demo`.
+**After:**
+
+```python
+from galileo import GalileoLogger
+```
+
+Leave the next commented `create_galileo_logger` line as-is.
+
+### Step 2b — Replace `_create_galileo_logger` (~lines 40–52)
+
+Remove the docstring (`""" ... """`) and delete `_ = config` / `return None`.
+
+**Paste exactly:**
+
+```python
+def _create_galileo_logger(config: Dict[str, Any]):
+    galileo_cfg = config.get("galileo", {})
+    project = galileo_cfg.get("project", "galileo-lab-it-helpdesk")
+    log_stream = galileo_cfg.get("log_stream", "default")
+    if not os.environ.get("GALILEO_API_KEY"):
+        return None
+    return GalileoLogger(project=project, log_stream=log_stream)
+```
+
+### Step 2c — Replace `_start_galileo_session_if_needed` (~lines 55–69)
+
+Remove the docstring and `_ = config`.
+
+**Paste exactly:**
+
+```python
+def _start_galileo_session_if_needed(config: Dict[str, Any]) -> None:
+    logger = st.session_state.get("galileo_logger")
+    if logger and not st.session_state.galileo_session_started:
+        ui = config.get("ui", {})
+        title = ui.get("app_title", "IT Helpdesk Assistant Lab")
+        logger.start_session(
+            name=f"{title} Demo",
+            external_id=st.session_state.session_id,
+        )
+        st.session_state.galileo_session_started = True
+```
+
+### Step 2d — Restart and verify
+
+```bash
+streamlit run app.py
+```
+
+Send a chat message → Galileo console shows a new session like `IT Helpdesk Assistant Lab Demo`.
+
+**Reference:** `galileo-golden-demo/app.py` ~304–317 and ~1024–1076
 
 ---
 
 ## Exercise 3 — LangChain callback
 
-**File:** [`agent.py`](agent.py)
+**File:** `agent.py`  
+**Open:** `open -a Cursor agent.py`
 
-**Goal:** Auto-capture LLM and tool spans via `GalileoCallback`.
+### Step 3a — Uncomment import (~line 25)
 
-**Steps:**
+**Before:**
 
-1. Uncomment `from galileo.handlers.langchain import GalileoCallback`
-2. Replace `self.invoke_config` with the commented version that includes `callbacks`
+```python
+# from galileo.handlers.langchain import GalileoCallback
+```
 
-**Important flags:**
+**After:**
 
-- `start_new_trace=False` — trace started manually in Exercise 4
-- `flush_on_chain_end=False` — flush in `finalize_trace`
+```python
+from galileo.handlers.langchain import GalileoCallback
+```
+
+### Step 3b — Replace `self.invoke_config` (~lines 60–72)
+
+Find `# INSTRUMENTATION (Exercise 3)`.
+
+**Delete this line:**
+
+```python
+        self.invoke_config = {"configurable": {"thread_id": self.session_id}}
+```
+
+**Uncomment the block above it so `__init__` contains:**
+
+```python
+        callbacks = [
+            GalileoCallback(
+                galileo_logger=galileo_logger,
+                start_new_trace=False,
+                flush_on_chain_end=False,
+            )
+        ]
+        self.invoke_config = {
+            "configurable": {"thread_id": self.session_id},
+            "callbacks": callbacks,
+        }
+```
+
+Keep `start_new_trace=False` and `flush_on_chain_end=False`.
 
 **Reference:** `galileo-golden-demo/agent_frameworks/langgraph/agent.py` lines 219–230
 
@@ -73,28 +178,56 @@ Expected: `galileo-lab-it-helpdesk`
 
 ## Exercise 4 — Trace boundary
 
-**Files:** [`agent.py`](agent.py), [`helpers/trace_lifecycle.py`](helpers/trace_lifecycle.py)
+**File:** `helpers/trace_lifecycle.py`  
+**Open:** `open -a Cursor helpers/trace_lifecycle.py`
 
-**Goal:** Wrap each user query in a root trace.
+### Step 4a — Replace `ensure_trace_started`
 
-**Steps:**
+Remove the docstring and placeholder `_ = (galileo_logger, ...)`.
 
-1. Uncomment bodies of `ensure_trace_started()` and `finalize_trace()` in `trace_lifecycle.py`
-2. Confirm calls in `agent.py` `_process_query_async` (already present)
+**Paste exactly:**
+
+```python
+def ensure_trace_started(
+    galileo_logger,
+    messages=None,
+    *,
+    trace_input: Optional[str] = None,
+    trace_name: str = "Run Agent",
+) -> None:
+    if not galileo_logger or galileo_logger.current_parent() is not None:
+        return
+    if trace_input is None and messages is not None:
+        trace_input = _extract_trace_input(messages)
+    galileo_logger.start_trace(input=trace_input or "", name=trace_name)
+```
+
+### Step 4b — Replace `finalize_trace`
+
+**Paste exactly:**
+
+```python
+def finalize_trace(galileo_logger, output: str) -> None:
+    if not galileo_logger or galileo_logger.current_parent() is None:
+        return
+    galileo_logger.conclude(output=output)
+    galileo_logger.flush()
+```
+
+`agent.py` already calls these (lines ~133–151) — no changes needed there.
+
+Restart Streamlit. Each chat turn should produce one root trace named **Run Agent**.
 
 **Reference:** `galileo-golden-demo/helpers/agent_control_helpers.py` lines 115–135
 
-**Check:** Each chat turn produces one root trace named `Run Agent` with nested LLM/tool spans.
-
 ---
 
-## Exercise 5 — Named LLM spans
+## Exercise 5 — Named LLM spans (verify only)
 
-**File:** [`helpers/llm.py`](helpers/llm.py)
+**File:** `helpers/llm.py`  
+**Open:** `open -a Cursor helpers/llm.py`
 
-**Goal:** Readable LLM span names in Galileo.
-
-**Note:** `name="IT Helpdesk Assistant"` is already passed to `ChatOllama` / `ChatOpenAI`. Verify spans show this label after Exercise 3.
+Confirm lines ~34 and ~44 pass `name=name` to `ChatOpenAI` / `ChatOllama`. After Exercise 3, LLM spans should show **IT Helpdesk Assistant**.
 
 **Reference:** `galileo-golden-demo/helpers/llm_utils.py`
 
@@ -102,21 +235,31 @@ Expected: `galileo-lab-it-helpdesk`
 
 ## Exercise 6 — Optional manual tool spans
 
-**File:** [`tools.py`](tools.py)
+**File:** `tools.py`  
+**Open:** `open -a Cursor tools.py`
 
-**Goal:** Explicit tool span metadata via `add_tool_span`.
+In `_log_tool_span` (~line 31), remove the docstring and placeholder line.
 
-**Steps:** Uncomment `_log_tool_span()` body.
+**Paste exactly:**
 
-**When to use:** Extra fields or timing not captured by `GalileoCallback`. May duplicate auto spans — use for demo visibility only.
+```python
+def _log_tool_span(name: str, tool_input: str, tool_output: str, duration_ns: int) -> None:
+    if not _galileo_logger:
+        return
+    _galileo_logger.add_tool_span(
+        input=tool_input,
+        output=tool_output,
+        name=name,
+        duration_ns=duration_ns,
+        status_code=200,
+    )
+```
 
 **Reference:** `galileo-golden-demo/domains/healthcare/tools/logic.py` `_log_tool_span`
 
 ---
 
 ## Exercise 7 — Verification checklist
-
-Run through this after completing exercises 1–4 (5–6 optional):
 
 - [ ] Sidebar shows **Galileo API key loaded**
 - [ ] Send: `Look up ticket T-1001` → agent uses `lookup_ticket`
@@ -138,8 +281,6 @@ Run through this after completing exercises 1–4 (5–6 optional):
 ---
 
 ## Future path: Splunk OTEL GenAI
-
-This lab uses the **Galileo Python SDK** (same family as Splunk Agent Observability). For OpenTelemetry GenAI code-based instrumentation, see Splunk docs:
 
 https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring/code-based-instrumentation
 
