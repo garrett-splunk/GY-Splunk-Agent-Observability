@@ -182,7 +182,7 @@ python3 -m http.server 8095
         <p><strong>Cursor (recommended)</strong></p>
         <ul>
           <li>In Cursor: <strong>File → Open File…</strong> → select <code>.streamlit/secrets.toml</code> inside your lab folder</li>
-          <li>Or from the lab root in a terminal:</li>
+          <li>Or from the lab root in a terminal (macOS — works without installing the <code>cursor</code> CLI):</li>
         </ul>
         <div class="code-block">
           <div class="code-block__header">
@@ -190,9 +190,9 @@ python3 -m http.server 8095
             <button type="button" class="btn-copy" data-copy="cmd-3-1-open-cursor">Copy</button>
           </div>
           <pre><code id="cmd-3-1-open-cursor">cd ~/Desktop/galileo-assistant-lab
-cursor .streamlit/secrets.toml</code></pre>
+open -a Cursor .streamlit/secrets.toml</code></pre>
         </div>
-        <p class="muted">If the <code>cursor</code> command is not found, use <code>open -a Cursor .streamlit/secrets.toml</code> or drag the file into Cursor from Finder.</p>
+        <p class="muted">Optional: install the <code>cursor</code> shell command in Cursor via <strong>Command Palette</strong> (<code>Cmd+Shift+P</code>) → <strong>Shell Command: Install 'cursor' command in PATH</strong>. Then you can use <code>cursor .streamlit/secrets.toml</code>.</p>
 
         <p><strong>Other editors</strong></p>
         <ul>
