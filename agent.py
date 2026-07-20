@@ -21,8 +21,7 @@ from helpers.llm import LLMProvider, get_chat_model
 from helpers.trace_lifecycle import ensure_trace_started, finalize_trace
 from tools import TOOLS, set_galileo_logger
 
-# INSTRUMENTATION (Exercise 3): uncomment when wiring LangChain auto-tracing
-# from galileo.handlers.langchain import GalileoCallback
+from galileo.handlers.langchain import GalileoCallback
 
 
 class State(TypedDict):
@@ -57,19 +56,19 @@ class ITHelpdeskAgent:
         self.graph = None
         self.tools = self._build_langchain_tools()
 
-        # INSTRUMENTATION (Exercise 3): build callbacks list with GalileoCallback
-        # callbacks = [
-        #     GalileoCallback(
-        #         galileo_logger=galileo_logger,
-        #         start_new_trace=False,
-        #         flush_on_chain_end=False,
-        #     )
-        # ]
-        # self.invoke_config = {
-        #     "configurable": {"thread_id": self.session_id},
-        #     "callbacks": callbacks,
-        # }
-        self.invoke_config = {"configurable": {"thread_id": self.session_id}}
+        callbacks = []
+        if galileo_logger:
+            callbacks.append(
+                GalileoCallback(
+                    galileo_logger=galileo_logger,
+                    start_new_trace=False,
+                    flush_on_chain_end=False,
+                )
+            )
+        self.invoke_config = {
+            "configurable": {"thread_id": self.session_id},
+            "callbacks": callbacks,
+        }
 
         if galileo_logger:
             set_galileo_logger(galileo_logger)

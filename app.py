@@ -20,8 +20,7 @@ from helpers.demo_scenarios import (
 from setup_env import load_config, setup_environment
 
 # INSTRUMENTATION (Exercise 2): uncomment when wiring per-session logger
-# from galileo import GalileoLogger
-# from helpers.demo_scenarios import create_galileo_logger
+from galileo import GalileoLogger
 
 
 def _init_session_state(config: Dict[str, Any]) -> None:
@@ -38,24 +37,15 @@ def _init_session_state(config: Dict[str, Any]) -> None:
 
 
 def _create_galileo_logger(config: Dict[str, Any]):
-    """
-    INSTRUMENTATION (Exercise 2): uncomment to create a per-tab GalileoLogger.
-
     galileo_cfg = config.get("galileo", {})
     project = galileo_cfg.get("project", "galileo-lab-it-helpdesk")
     log_stream = galileo_cfg.get("log_stream", "default")
     if not os.environ.get("GALILEO_API_KEY"):
         return None
     return GalileoLogger(project=project, log_stream=log_stream)
-    """
-    _ = config
-    return None
 
 
 def _start_galileo_session_if_needed(config: Dict[str, Any]) -> None:
-    """
-    INSTRUMENTATION (Exercise 2): call start_session on first user message.
-
     logger = st.session_state.get("galileo_logger")
     if logger and not st.session_state.galileo_session_started:
         ui = config.get("ui", {})
@@ -65,8 +55,6 @@ def _start_galileo_session_if_needed(config: Dict[str, Any]) -> None:
             external_id=st.session_state.session_id,
         )
         st.session_state.galileo_session_started = True
-    """
-    _ = config
 
 
 def _render_demo_sidebar(config: Dict[str, Any]) -> None:

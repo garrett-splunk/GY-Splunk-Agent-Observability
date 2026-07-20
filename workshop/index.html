@@ -236,6 +236,12 @@ python3 -m http.server 8095
             <p>If you create project <code>galileo-lab-it-helpdesk</code> and log stream <code>default</code>, you can keep the shipped <code>config.yaml</code> as-is.</p>
           </div>
         </div>
+        <div class="callout callout--info">
+          <p class="callout__title">Multitenant / staging consoles</p>
+          <div class="callout__body">
+            <p>If <code>galileo_console_url</code> in secrets points at a tenant URL (e.g. <code>console.multitenant.galileocloud.io</code>), create the project and log stream in <strong>that</strong> console — not <code>app.galileo.ai</code>. Traces only appear where the project exists.</p>
+          </div>
+        </div>
 
         <h3>3.4 — Point the app at your project (Exercise 1b)</h3>
         <p>Edit <code>config.yaml</code> so the app sends traces to your project and log stream:</p>

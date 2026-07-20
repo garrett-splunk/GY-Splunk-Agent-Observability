@@ -5,8 +5,6 @@ INSTRUMENTATION (Exercise 4):
   Implement ensure_trace_started() and finalize_trace() using GalileoLogger APIs.
   Reference: ~/Desktop/galileo-golden-demo/helpers/agent_control_helpers.py lines 115–135
 """
-import json
-from typing import Any, List, Optional
 
 
 def _extract_trace_input(messages: Any) -> str:
@@ -30,29 +28,17 @@ def ensure_trace_started(
     trace_input: Optional[str] = None,
     trace_name: str = "Run Agent",
 ) -> None:
-    """
-    Start a Galileo trace when none is active (required before LLM/tool spans).
-
-    INSTRUMENTATION (Exercise 4): uncomment the body below after wiring GalileoLogger.
-
+    """Start a Galileo trace when none is active (required before LLM/tool spans)."""
     if not galileo_logger or galileo_logger.current_parent() is not None:
         return
     if trace_input is None and messages is not None:
         trace_input = _extract_trace_input(messages)
     galileo_logger.start_trace(input=trace_input or "", name=trace_name)
-    """
-    _ = (galileo_logger, messages, trace_input, trace_name)
 
 
 def finalize_trace(galileo_logger, output: str) -> None:
-    """
-    Conclude and flush the active trace after a query completes.
-
-    INSTRUMENTATION (Exercise 4): uncomment the body below after wiring GalileoLogger.
-
+    """Conclude and flush the active trace after a query completes."""
     if not galileo_logger or galileo_logger.current_parent() is None:
         return
     galileo_logger.conclude(output=output)
     galileo_logger.flush()
-    """
-    _ = (galileo_logger, output)
