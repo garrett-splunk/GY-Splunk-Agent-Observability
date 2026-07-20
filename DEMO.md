@@ -115,5 +115,5 @@ Restart Streamlit after config changes.
 ## Fallback if LLM is unavailable
 
 - **Hallucination button** still works (synthetic trace, no live LLM)
-- Show golden demo at `~/Desktop/galileo-golden-demo` for full multi-domain story
+- Show golden demo (`galileo-golden-demo` clone) for full multi-domain story
 - Walk through INSTRUMENTATION.md comment blocks as a “build observability” narrative

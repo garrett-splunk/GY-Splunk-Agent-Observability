@@ -4,16 +4,28 @@ Practice wiring Galileo SDK observability into the IT Helpdesk assistant. Each e
 
 **Workshop site (with copy buttons):** https://garrett-splunk.github.io/GY-Splunk-Agent-Observability/
 
-Reference implementation: `~/Desktop/galileo-golden-demo`
+Reference implementation: optional `galileo-golden-demo` clone
+
+---
+
+## Lab root
+
+**Lab root** is the directory where you cloned or copied this repository. Default folder name after clone: `GY-Splunk-Agent-Observability`.
+
+```bash
+git clone https://github.com/garrett-splunk/GY-Splunk-Agent-Observability.git
+cd GY-Splunk-Agent-Observability
+```
+
+All commands below assume you are already in lab root unless noted otherwise.
 
 ---
 
 ## How to open lab files in Cursor
 
-From the lab root:
+From lab root:
 
 ```bash
-cd ~/Desktop/galileo-assistant-lab
 open -a Cursor FILENAME
 ```
 

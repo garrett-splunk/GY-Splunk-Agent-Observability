@@ -4,9 +4,9 @@ Hands-on workshop: build and instrument an IT Helpdesk AI assistant with the **G
 
 **Participant site:** https://garrett-splunk.github.io/GY-Splunk-Agent-Observability/ (or `workshop/index.html` locally via `python3 -m http.server 8095`)
 
-**Lab root:** `~/Desktop/galileo-assistant-lab`
+**Lab root:** the directory where participants cloned this repo (default folder name: `GY-Splunk-Agent-Observability`)
 
-**Reference app:** `~/Desktop/galileo-golden-demo`
+**Reference app:** optional `galileo-golden-demo` clone for a fully wired multi-domain example
 
 ---
 
@@ -42,7 +42,7 @@ Adjust: skip Exercises 5–6 for shorter sessions; run hallucination demo even i
 - [ ] Ollama installed with `gemma4` pulled **or** OpenAI keys for hosted mode
 - [ ] Galileo API keys issued (ingest scope)
 - [ ] Galileo project `galileo-lab-it-helpdesk` (or edit `config.yaml`)
-- [ ] Repo copied to Desktop: `galileo-assistant-lab`
+- [ ] Repo cloned locally (`GY-Splunk-Agent-Observability` or equivalent path)
 - [ ] Facilitator tested: hallucination button + one chat query with full instrumentation
 
 ---
@@ -50,7 +50,8 @@ Adjust: skip Exercises 5–6 for shorter sessions; run hallucination demo even i
 ## Facilitator cheat sheet (commands)
 
 ```bash
-cd ~/Desktop/galileo-assistant-lab
+git clone https://github.com/garrett-splunk/GY-Splunk-Agent-Observability.git
+cd GY-Splunk-Agent-Observability
 python3 -m venv venv && source venv/bin/activate
 pip install -r requirements.txt
 cp .streamlit/secrets.toml.example .streamlit/secrets.toml
@@ -59,8 +60,8 @@ cp .streamlit/secrets.toml.example .streamlit/secrets.toml
 # Terminal 1 — workshop guide
 cd workshop && python3 -m http.server 8095
 
-# Terminal 2 — app
-cd .. && streamlit run app.py
+# Terminal 2 — app (from lab root)
+streamlit run app.py
 ```
 
 Verify env:
@@ -120,11 +121,11 @@ For customers interested in **blocking** not just observing:
 
 ## Related workshops
 
-| Workshop | Location |
-|----------|----------|
-| Oracle DB Monitoring | `~/Desktop/Oracle-DB-Mon-Resources` |
-| OTel Demo on Kubernetes | `~/Desktop/OpenTelemetry-Kubernetes-Demo` |
-| Galileo Golden Demo (full) | `~/Desktop/galileo-golden-demo` |
+| Workshop | Repository / site |
+|----------|-------------------|
+| Oracle DB Monitoring | `Oracle-DB-Mon-Resources` |
+| OTel Demo on Kubernetes | https://garrett-splunk.github.io/OpenTelemetry-Kubernetes-Demo/ |
+| Galileo Golden Demo (full) | `galileo-golden-demo` |
 
 ---
 

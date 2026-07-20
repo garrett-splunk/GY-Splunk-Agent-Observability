@@ -72,6 +72,12 @@
             <p>The app runs <em>before</em> you finish instrumentation. Comment blocks marked <code># INSTRUMENTATION:</code> are your exercises — uncomment and wire Galileo until traces appear in the console.</p>
           </div>
         </div>
+        <div class="callout callout--info">
+          <p class="callout__title">Lab root</p>
+          <div class="callout__body">
+            <p>Use the folder where you cloned or copied this repository. After <code>git clone</code>, the default name is <code>GY-Splunk-Agent-Observability</code>. All terminal steps assume you are in that directory unless noted otherwise.</p>
+          </div>
+        </div>
       </header>
 
       <section>
@@ -96,7 +102,7 @@
             <div class="flow-sub">Traces · evaluators · guardrails</div>
           </div>
         </div>
-        <p class="muted">Lab root: <code>~/Desktop/galileo-assistant-lab</code> · Reference: <code>galileo-golden-demo</code></p>
+        <p class="muted">Lab root: your clone of this repo (default: <code>GY-Splunk-Agent-Observability</code>) · Optional reference: <code>galileo-golden-demo</code></p>
       </section>
 
       <section id="prereqs">
@@ -128,13 +134,15 @@
         <h2>Set up the lab</h2>
         <p>Create a virtual environment and install dependencies.</p>
 
-        <h3>2.1 — Go to the lab folder</h3>
+        <h3>2.1 — Clone the repo and enter lab root</h3>
+        <p>If you already have a copy, <code>cd</code> to that folder and skip <code>git clone</code>.</p>
         <div class="code-block">
           <div class="code-block__header">
             <span class="code-block__file">terminal</span>
             <button type="button" class="btn-copy" data-copy="cmd-2-1">Copy</button>
           </div>
-          <pre><code id="cmd-2-1">cd ~/Desktop/galileo-assistant-lab</code></pre>
+          <pre><code id="cmd-2-1">git clone https://github.com/garrett-splunk/GY-Splunk-Agent-Observability.git
+cd GY-Splunk-Agent-Observability</code></pre>
         </div>
 
         <h3>2.2 — Create venv and install packages</h3>
@@ -154,7 +162,7 @@ pip install -r requirements.txt</code></pre>
             <span class="code-block__file">terminal · second window</span>
             <button type="button" class="btn-copy" data-copy="cmd-2-3">Copy</button>
           </div>
-          <pre><code id="cmd-2-3">cd ~/Desktop/galileo-assistant-lab/workshop
+          <pre><code id="cmd-2-3">cd workshop
 python3 -m http.server 8095
 # browse http://localhost:8095</code></pre>
         </div>
@@ -189,10 +197,9 @@ python3 -m http.server 8095
             <span class="code-block__file">terminal · macOS</span>
             <button type="button" class="btn-copy" data-copy="cmd-3-1-open-cursor">Copy</button>
           </div>
-          <pre><code id="cmd-3-1-open-cursor">cd ~/Desktop/galileo-assistant-lab
-open -a Cursor .streamlit/secrets.toml</code></pre>
+          <pre><code id="cmd-3-1-open-cursor">open -a Cursor .streamlit/secrets.toml</code></pre>
         </div>
-        <p class="muted">Optional: install the <code>cursor</code> shell command in Cursor via <strong>Command Palette</strong> (<code>Cmd+Shift+P</code>) → <strong>Shell Command: Install 'cursor' command in PATH</strong>. Then you can use <code>cursor .streamlit/secrets.toml</code>.</p>
+        <p class="muted">Run from lab root. Optional: install the <code>cursor</code> shell command in Cursor via <strong>Command Palette</strong> (<code>Cmd+Shift+P</code>) → <strong>Shell Command: Install 'cursor' command in PATH</strong>. Then you can use <code>cursor .streamlit/secrets.toml</code>.</p>
 
         <p><strong>Other editors</strong></p>
         <ul>
@@ -201,9 +208,9 @@ open -a Cursor .streamlit/secrets.toml</code></pre>
         </ul>
 
         <div class="callout callout--info">
-          <p class="callout__title">Cloned from GitHub?</p>
+          <p class="callout__title">Different folder name?</p>
           <div class="callout__body">
-            <p>Use your clone path instead of <code>~/Desktop/galileo-assistant-lab</code>, for example <code>cd ~/GY-Splunk-Agent-Observability</code>.</p>
+            <p>If you renamed the clone or copied the project elsewhere, use your path instead of <code>GY-Splunk-Agent-Observability</code>. Only the <strong>lab root</strong> matters for the remaining steps.</p>
           </div>
         </div>
 
@@ -241,8 +248,7 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
             <span class="code-block__file">terminal</span>
             <button type="button" class="btn-copy" data-copy="cmd-4-1">Copy</button>
           </div>
-          <pre><code id="cmd-4-1">cd ~/Desktop/galileo-assistant-lab
-source venv/bin/activate
+          <pre><code id="cmd-4-1">source venv/bin/activate
 streamlit run app.py</code></pre>
         </div>
 
@@ -265,9 +271,8 @@ streamlit run app.py</code></pre>
         <div class="callout callout--info">
           <p class="callout__title">Open any lab file in Cursor (macOS)</p>
           <div class="callout__body">
-            <p>From the lab root, replace <code>FILENAME</code> with the file you are editing:</p>
-            <pre><code>cd ~/Desktop/galileo-assistant-lab
-open -a Cursor FILENAME</code></pre>
+            <p>From lab root, replace <code>FILENAME</code> with the file you are editing:</p>
+            <pre><code>open -a Cursor FILENAME</code></pre>
             <p>In Cursor, press <code>Cmd+F</code> and search for <code># INSTRUMENTATION</code> to jump to each exercise block. Save with <code>Cmd+S</code>.</p>
           </div>
         </div>
@@ -597,7 +602,7 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
         <h2>Wrap-up</h2>
         <p>You built a LangGraph assistant, wired Galileo SDK instrumentation, and ran three demo scenarios. Next steps:</p>
         <ul>
-          <li>Explore the full multi-domain demo: <code>~/Desktop/galileo-golden-demo</code></li>
+          <li>Explore the full multi-domain demo: optional <code>galileo-golden-demo</code> clone</li>
           <li>Read Splunk AI Agent Monitoring docs for OTEL GenAI path</li>
           <li>Customize <code>config.yaml</code> demo stories for your audience</li>
         </ul>

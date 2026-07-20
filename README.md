@@ -6,7 +6,7 @@ A simplified **IT Helpdesk AI assistant** for practicing Galileo SDK instrumenta
 
 **Repository:** https://github.com/garrett-splunk/GY-Splunk-Agent-Observability
 
-Fully wired reference: [`~/Desktop/galileo-golden-demo`](../galileo-golden-demo)
+Fully wired reference: optional clone of the [`galileo-golden-demo`](https://github.com/rungalileo/galileo-golden-demo) repository
 
 ## What you get
 
@@ -18,10 +18,19 @@ Fully wired reference: [`~/Desktop/galileo-golden-demo`](../galileo-golden-demo)
 
 ## Quick start
 
-**Workshop guide (step-by-step website):** https://garrett-splunk.github.io/GY-Splunk-Agent-Observability/ — or open [`workshop/index.html`](workshop/index.html) locally:
+Clone the repo (or open your existing copy), then use that folder as **lab root** for all commands below:
 
 ```bash
-cd ~/Desktop/galileo-assistant-lab/workshop
+git clone https://github.com/garrett-splunk/GY-Splunk-Agent-Observability.git
+cd GY-Splunk-Agent-Observability
+```
+
+If you copied the project to a different path, `cd` there instead. The default clone folder name is `GY-Splunk-Agent-Observability`.
+
+**Workshop guide locally:**
+
+```bash
+cd workshop
 python3 -m http.server 8095
 # browse http://localhost:8095
 ```
@@ -29,7 +38,7 @@ python3 -m http.server 8095
 Facilitators: see [`workshop/WORKSHOP_GUIDE.md`](workshop/WORKSHOP_GUIDE.md).
 
 ```bash
-cd ~/Desktop/galileo-assistant-lab
+# from lab root
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
@@ -74,7 +83,7 @@ Customize scenarios in `config.yaml` under `demo_hallucinations` and `demo_promp
 ## Project layout
 
 ```
-galileo-assistant-lab/
+GY-Splunk-Agent-Observability/   # lab root (your clone folder)
 ├── app.py                 # Streamlit UI + demo sidebar
 ├── agent.py               # LangGraph agent
 ├── tools.py               # Ticket + KB tools
