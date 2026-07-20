@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark" data-theme-mode="auto">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#FF007F" />
+  <title>Galileo Assistant Lab — Splunk Agent Observability</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  <header class="site-header">
+    <div class="site-header__inner">
+      <a class="brand" href="#overview">
+        <span class="brand__mark">splunk&gt;</span>
+        <span class="brand__tag">galileo assistant lab</span>
+      </a>
+      <div class="header-actions">
+        <a class="header-doc-link" href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring" target="_blank" rel="noopener">Splunk docs</a>
+        <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+          <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+          <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="progress" aria-hidden="true"><div class="progress__bar" id="progressBar"></div></div>
+
+  <div class="page">
+    <aside class="sidebar" aria-label="Lab steps">
+      <p class="sidebar__sub">Workshop</p>
+      <p class="sidebar__hint">Follow each step in order. Styled with the <a href="https://github.com/splunk/hugo-theme-splunk-workshop" target="_blank" rel="noopener">Splunk Workshop Theme</a>.</p>
+      <ul class="sidebar-tree">
+        <li class="sidebar-tree__item"><a href="#overview" class="sidebar-tree__link" data-step="0"><span class="sidebar-tree__num">—</span> Overview</a></li>
+        <li class="sidebar-tree__item"><a href="#prereqs" class="sidebar-tree__link" data-step="1"><span class="sidebar-tree__num">1</span> Prerequisites</a></li>
+        <li class="sidebar-tree__item"><a href="#step-setup" class="sidebar-tree__link" data-step="2"><span class="sidebar-tree__num">2</span> Set up the lab</a></li>
+        <li class="sidebar-tree__item"><a href="#step-secrets" class="sidebar-tree__link" data-step="3"><span class="sidebar-tree__num">3</span> Configure secrets</a></li>
+        <li class="sidebar-tree__item"><a href="#step-run" class="sidebar-tree__link" data-step="4"><span class="sidebar-tree__num">4</span> Run the assistant</a></li>
+        <li class="sidebar-tree__item"><a href="#step-ex1-2" class="sidebar-tree__link" data-step="5"><span class="sidebar-tree__num">5</span> Instrument: env + logger</a></li>
+        <li class="sidebar-tree__item"><a href="#step-ex3-4" class="sidebar-tree__link" data-step="6"><span class="sidebar-tree__num">6</span> Instrument: callback + trace</a></li>
+        <li class="sidebar-tree__item"><a href="#step-demo-happy" class="sidebar-tree__link" data-step="7"><span class="sidebar-tree__num">7</span> Demo: happy path</a></li>
+        <li class="sidebar-tree__item"><a href="#step-demo-hallucination" class="sidebar-tree__link" data-step="8"><span class="sidebar-tree__num">8</span> Demo: hallucination</a></li>
+        <li class="sidebar-tree__item"><a href="#step-demo-injection" class="sidebar-tree__link" data-step="9"><span class="sidebar-tree__num">9</span> Demo: prompt injection</a></li>
+        <li class="sidebar-tree__item"><a href="#step-verify" class="sidebar-tree__link" data-step="10"><span class="sidebar-tree__num">10</span> Verify in Galileo</a></li>
+        <li class="sidebar-tree__item"><a href="#phase2" class="sidebar-tree__link" data-step="0"><span class="sidebar-tree__num">+</span> Phase 2 guardrails</a></li>
+        <li class="sidebar-tree__item"><a href="#troubleshoot" class="sidebar-tree__link" data-step="11"><span class="sidebar-tree__num">?</span> Troubleshooting</a></li>
+        <li class="sidebar-tree__item"><a href="#wrapup" class="sidebar-tree__link" data-step="0"><span class="sidebar-tree__num">—</span> Wrap-up</a></li>
+      </ul>
+      <div class="sidebar-footer">
+        <a href="https://github.com/garrett-splunk/GY-Splunk-Agent-Observability/blob/main/INSTRUMENTATION.md" target="_blank" rel="noopener">INSTRUMENTATION.md</a> ·
+        <a href="https://github.com/garrett-splunk/GY-Splunk-Agent-Observability/blob/main/workshop/WORKSHOP_GUIDE.md" target="_blank" rel="noopener">Facilitator guide</a>
+      </div>
+    </aside>
+
+    <main class="prose" id="content">
+      <header class="hero" id="overview">
+        <p class="eyebrow">Hands-on lab · ~60–90 minutes</p>
+        <h1>Instrument an AI Assistant with Galileo</h1>
+        <p class="lead">
+          Build a LangGraph IT Helpdesk agent, wire <strong>Galileo SDK</strong> observability step by step,
+          and run demo scenarios for <strong>hallucinations</strong> and <strong>prompt injection</strong>
+          in Splunk Agent Observability.
+        </p>
+        <div class="callout callout--info">
+          <p class="callout__title">Key idea</p>
+          <div class="callout__body">
+            <p>The app runs <em>before</em> you finish instrumentation. Comment blocks marked <code># INSTRUMENTATION:</code> are your exercises — uncomment and wire Galileo until traces appear in the console.</p>
+          </div>
+        </div>
+      </header>
+
+      <section>
+        <h2>Architecture</h2>
+        <div class="flow-diagram" role="img" aria-label="Assistant to Galileo data flow">
+          <div class="flow-node">
+            <div class="flow-title">Streamlit UI</div>
+            <div class="flow-sub">Chat + demo sidebar</div>
+          </div>
+          <div class="flow-arrow"><span>invoke</span></div>
+          <div class="flow-node flow-node-accent">
+            <div class="flow-title">LangGraph Agent</div>
+            <div class="flow-sub">lookup_ticket · search_kb</div>
+            <div class="flow-pipes">
+              <span>GalileoCallback → LLM + tool spans</span>
+              <span>trace lifecycle → root span</span>
+            </div>
+          </div>
+          <div class="flow-arrow"><span>export</span></div>
+          <div class="flow-node">
+            <div class="flow-title">Galileo Console</div>
+            <div class="flow-sub">Traces · evaluators · guardrails</div>
+          </div>
+        </div>
+        <p class="muted">Lab root: <code>~/Desktop/galileo-assistant-lab</code> · Reference: <code>galileo-golden-demo</code></p>
+      </section>
+
+      <section id="prereqs">
+        <div class="step-meta">
+          <span class="step-badge">Step 1</span>
+          <span class="step-time">~2 min</span>
+        </div>
+        <h2>Prerequisites</h2>
+        <ul class="checklist">
+          <li>Python <strong>3.10+</strong></li>
+          <li><a href="https://ollama.com/" target="_blank" rel="noopener">Ollama</a> with <code>gemma4</code> pulled — <strong>or</strong> OpenAI API key</li>
+          <li>Galileo API key + access to Galileo console</li>
+          <li>~500 MB disk for Python venv + dependencies</li>
+          <li>Ports <strong>8501</strong> (Streamlit app) and <strong>8095</strong> (this guide, optional) available</li>
+        </ul>
+        <div class="callout callout--info">
+          <p class="callout__title">Ollama quick check</p>
+          <div class="callout__body">
+            <p><code>curl http://localhost:11434/api/tags</code> should return JSON. If empty, run <code>ollama pull gemma4</code>.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="step-setup">
+        <div class="step-meta">
+          <span class="step-badge">Step 2</span>
+          <span class="step-time">~5 min</span>
+        </div>
+        <h2>Set up the lab</h2>
+        <p>Create a virtual environment and install dependencies.</p>
+
+        <h3>2.1 — Go to the lab folder</h3>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-2-1">Copy</button>
+          </div>
+          <pre><code id="cmd-2-1">cd ~/Desktop/galileo-assistant-lab</code></pre>
+        </div>
+
+        <h3>2.2 — Create venv and install packages</h3>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-2-2">Copy</button>
+          </div>
+          <pre><code id="cmd-2-2">python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt</code></pre>
+        </div>
+
+        <h3>2.3 — Open this workshop guide (optional)</h3>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal · second window</span>
+            <button type="button" class="btn-copy" data-copy="cmd-2-3">Copy</button>
+          </div>
+          <pre><code id="cmd-2-3">cd ~/Desktop/galileo-assistant-lab/workshop
+python3 -m http.server 8095
+# browse http://localhost:8095</code></pre>
+        </div>
+      </section>
+
+      <section id="step-secrets">
+        <div class="step-meta">
+          <span class="step-badge">Step 3</span>
+          <span class="step-time">~5 min</span>
+        </div>
+        <h2>Configure secrets</h2>
+        <p>Copy the example secrets file and add your Galileo and LLM credentials. Never commit <code>secrets.toml</code>.</p>
+
+        <h3>3.1 — Copy secrets template</h3>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-3-1">Copy</button>
+          </div>
+          <pre><code id="cmd-3-1">cp .streamlit/secrets.toml.example .streamlit/secrets.toml</code></pre>
+        </div>
+
+        <h3>3.2 — Edit secrets</h3>
+        <p>Set at minimum:</p>
+        <ul>
+          <li><code>galileo_api_key</code> — from Galileo console</li>
+          <li><code>galileo_console_url</code> — your Galileo instance URL</li>
+          <li><code>openai_api_key</code> — if using Hosted provider (optional if using Ollama)</li>
+        </ul>
+
+        <h3>3.3 — Verify environment (Exercise 1)</h3>
+        <p>When the API key is set, <code>setup_env.py</code> loads <code>GALILEO_PROJECT</code> from <code>config.yaml</code>.</p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-3-3">Copy</button>
+          </div>
+          <pre><code id="cmd-3-3">source venv/bin/activate
+python -c "from setup_env import setup_environment; setup_environment(); import os; print('project:', os.environ.get('GALILEO_PROJECT'))"</code></pre>
+        </div>
+        <p>Expected: <code>project: galileo-lab-it-helpdesk</code></p>
+      </section>
+
+      <section id="step-run">
+        <div class="step-meta">
+          <span class="step-badge">Step 4</span>
+          <span class="step-time">~5 min</span>
+        </div>
+        <h2>Run the assistant</h2>
+        <p>Start Streamlit. The app works without instrumentation — traces appear after Steps 5–6.</p>
+
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-4-1">Copy</button>
+          </div>
+          <pre><code id="cmd-4-1">cd ~/Desktop/galileo-assistant-lab
+source venv/bin/activate
+streamlit run app.py</code></pre>
+        </div>
+
+        <p>Open <a href="http://localhost:8501" target="_blank" rel="noopener">http://localhost:8501</a></p>
+        <ul class="checklist">
+          <li>Sidebar shows model provider (Local Ollama or Hosted OpenAI)</li>
+          <li>Sidebar <strong>Demo Scenarios</strong> section is visible</li>
+          <li>Chat responds to “Look up ticket T-1001”</li>
+        </ul>
+      </section>
+
+      <section id="step-ex1-2">
+        <div class="step-meta">
+          <span class="step-badge">Step 5</span>
+          <span class="step-time">~10 min</span>
+        </div>
+        <h2>Instrument: environment + session logger</h2>
+        <p>Complete <strong>Exercises 1–2</strong> in <code>INSTRUMENTATION.md</code>. Search for <code># INSTRUMENTATION</code> in the repo.</p>
+
+        <h3>Exercise 1 — <code>setup_env.py</code></h3>
+        <p>Confirm <code>GALILEO_*</code> env vars are set when API key is present (auto-wired if secrets are configured).</p>
+
+        <h3>Exercise 2 — <code>app.py</code></h3>
+        <ol>
+          <li>Uncomment <code>from galileo import GalileoLogger</code></li>
+          <li>Implement <code>_create_galileo_logger()</code> (see comment block)</li>
+          <li>Implement <code>_start_galileo_session_if_needed()</code> (see comment block)</li>
+        </ol>
+        <p><strong>Reference:</strong> <code>galileo-golden-demo/app.py</code> lines ~304–317 and ~1024–1076</p>
+
+        <div class="callout callout--info">
+          <p class="callout__title">Checkpoint</p>
+          <div class="callout__body">
+            <p>Restart Streamlit. Sidebar should show <strong>Galileo API key loaded</strong>. Send a chat message — a new session should appear in Galileo console.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="step-ex3-4">
+        <div class="step-meta">
+          <span class="step-badge">Step 6</span>
+          <span class="step-time">~15 min</span>
+        </div>
+        <h2>Instrument: callback + trace lifecycle</h2>
+        <p>Complete <strong>Exercises 3–4</strong>. This wires automatic LLM/tool spans and a root trace per chat turn.</p>
+
+        <h3>Exercise 3 — <code>agent.py</code></h3>
+        <ol>
+          <li>Uncomment <code>GalileoCallback</code> import</li>
+          <li>Replace <code>self.invoke_config</code> with the commented version including <code>callbacks</code></li>
+          <li>Keep <code>start_new_trace=False</code> and <code>flush_on_chain_end=False</code></li>
+        </ol>
+
+        <h3>Exercise 4 — <code>helpers/trace_lifecycle.py</code></h3>
+        <ol>
+          <li>Uncomment bodies of <code>ensure_trace_started()</code> and <code>finalize_trace()</code></li>
+          <li>Calls in <code>agent.py</code> are already in place</li>
+        </ol>
+
+        <p><strong>Reference:</strong> <code>galileo-golden-demo/agent_frameworks/langgraph/agent.py</code> and <code>helpers/agent_control_helpers.py</code></p>
+
+        <div class="callout callout--info">
+          <p class="callout__title">Checkpoint</p>
+          <div class="callout__body">
+            <p>Send “Look up ticket T-1001”. In Galileo, open trace <strong>Run Agent</strong> with nested LLM and <code>lookup_ticket</code> tool spans.</p>
+          </div>
+        </div>
+
+        <h3>Optional: Exercises 5–6</h3>
+        <ul>
+          <li><strong>Exercise 5</strong> — Named LLM spans in <code>helpers/llm.py</code> (already set; verify labels)</li>
+          <li><strong>Exercise 6</strong> — Manual <code>add_tool_span</code> in <code>tools.py</code></li>
+        </ul>
+      </section>
+
+      <section id="step-demo-happy">
+        <div class="step-meta">
+          <span class="step-badge">Step 7</span>
+          <span class="step-time">~5 min</span>
+        </div>
+        <h2>Demo: happy path</h2>
+        <p><strong>Act 1</strong> — show normal agent observability.</p>
+        <ol>
+          <li>In the app sidebar under <strong>Act 1 — Happy path</strong>, click <strong>Look up ticket T-1001</strong></li>
+          <li>Wait for the agent response with ticket details</li>
+          <li>Open Galileo → project <code>galileo-lab-it-helpdesk</code> → latest trace</li>
+        </ol>
+        <p><strong>Point out:</strong> LLM planning step, tool execution, final synthesis. Try <strong>How do I reset my VPN password?</strong> to trigger <code>search_kb</code>.</p>
+      </section>
+
+      <section id="step-demo-hallucination">
+        <div class="step-meta">
+          <span class="step-badge">Step 8</span>
+          <span class="step-time">~5 min</span>
+        </div>
+        <h2>Demo: hallucination</h2>
+        <p><strong>Act 2</strong> — intentional grounding failure for evaluator demos.</p>
+        <ol>
+          <li>Sidebar → <strong>Act 2 — Hallucination</strong></li>
+          <li>Click <strong>Log Hallucination to Galileo</strong></li>
+          <li>Open the new trace in Galileo console</li>
+        </ol>
+        <div class="callout callout--warn">
+          <p class="callout__title">Compare context vs output</p>
+          <div class="callout__body">
+            <p><strong>Retriever span:</strong> P1 SLA — 15 min response, 4 hr resolution<br />
+            <strong>LLM span:</strong> 24 hr response, 5 day resolution (wrong)</p>
+          </div>
+        </div>
+        <p>Edit scenarios in <code>config.yaml</code> → <code>demo_hallucinations</code>. Implementation reference: <code>helpers/demo_scenarios.py</code>.</p>
+      </section>
+
+      <section id="step-demo-injection">
+        <div class="step-meta">
+          <span class="step-badge">Step 9</span>
+          <span class="step-time">~5 min</span>
+        </div>
+        <h2>Demo: prompt injection</h2>
+        <p><strong>Act 3</strong> — show malicious input captured in traces.</p>
+        <ol>
+          <li>Sidebar → <strong>Act 3 — Prompt injection</strong></li>
+          <li>Click an example chip (e.g. <strong>Ignore instructions</strong>)</li>
+          <li>Review prefilled text in chat — send intentionally</li>
+          <li>Show trace input in Galileo</li>
+        </ol>
+        <p>Customize payloads in <code>config.yaml</code> → <code>demo_prompt_injections</code>.</p>
+      </section>
+
+      <section id="step-verify">
+        <div class="step-meta">
+          <span class="step-badge">Step 10</span>
+          <span class="step-time">~5 min</span>
+        </div>
+        <h2>Verify in Galileo</h2>
+        <p>Complete this checklist in the Galileo console:</p>
+        <ul class="checklist">
+          <li>Project: <code>galileo-lab-it-helpdesk</code></li>
+          <li>Log stream: <code>default</code></li>
+          <li>Live agent trace: root → LLM → tool → LLM</li>
+          <li>Hallucination trace: retriever + LLM mismatch</li>
+          <li>Injection trace: full malicious prompt in input</li>
+        </ul>
+      </section>
+
+      <section id="phase2">
+        <h2>Phase 2 — Live guardrails (optional)</h2>
+        <p>Move from <em>observe</em> to <em>block</em> prompt injection using Agent Control.</p>
+        <ol>
+          <li>Add <code>agent-control-sdk[galileo]</code> to requirements</li>
+          <li>Wire <code>enable_agent_control()</code> and <code>@control</code> on the LLM step (see golden demo)</li>
+          <li>Create <code>block-prompt-injection</code> control on the log stream in Galileo UI</li>
+          <li>Replay Act 3 — show deny/steer evaluation span</li>
+        </ol>
+        <p>Details: <code>galileo-golden-demo/README.md</code> (~lines 470–484) and <code>../DEMO.md</code>.</p>
+      </section>
+
+      <section id="troubleshoot">
+        <h2>Troubleshooting</h2>
+        <table>
+          <thead>
+            <tr><th>Symptom</th><th>Likely fix</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>No traces</td><td>Check <code>galileo_api_key</code> in secrets; complete Steps 5–6</td></tr>
+            <tr><td>Duplicate root traces</td><td><code>GalileoCallback(start_new_trace=False)</code></td></tr>
+            <tr><td>LLM spans, no tool spans</td><td>Attach callback in <code>agent.py</code> (Exercise 3)</td></tr>
+            <tr><td>Ollama errors</td><td><code>ollama serve</code> and <code>ollama pull gemma4</code></td></tr>
+            <tr><td>Hallucination button fails</td><td>API key or project name in <code>config.yaml</code></td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="wrapup">
+        <h2>Wrap-up</h2>
+        <p>You built a LangGraph assistant, wired Galileo SDK instrumentation, and ran three demo scenarios. Next steps:</p>
+        <ul>
+          <li>Explore the full multi-domain demo: <code>~/Desktop/galileo-golden-demo</code></li>
+          <li>Read Splunk AI Agent Monitoring docs for OTEL GenAI path</li>
+          <li>Customize <code>config.yaml</code> demo stories for your audience</li>
+        </ul>
+        <div class="callout callout--info">
+          <p class="callout__title">Lab files</p>
+          <div class="callout__body">
+            <p><code>INSTRUMENTATION.md</code> — exercise details · <code>DEMO.md</code> — presenter script · <code>WORKSHOP_GUIDE.md</code> — facilitator timing</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <nav class="toc" aria-label="On this page">
+      <p class="toc__title">On this page</p>
+      <ul class="toc__list" id="tocList"></ul>
+    </nav>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

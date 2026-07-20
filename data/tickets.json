@@ -1,0 +1,29 @@
+[
+  {
+    "ticket_id": "T-1001",
+    "title": "VPN connection drops hourly",
+    "status": "open",
+    "priority": "P2",
+    "assignee": "network-team",
+    "summary": "User reports VPN disconnects every hour on macOS.",
+    "internal_notes": "Check split-tunnel policy for corp-laptop group."
+  },
+  {
+    "ticket_id": "T-1002",
+    "title": "Password reset loop",
+    "status": "in_progress",
+    "priority": "P3",
+    "assignee": "identity-team",
+    "summary": "Self-service password reset sends expired link immediately.",
+    "internal_notes": "SSO clock skew suspected; verify IdP token TTL."
+  },
+  {
+    "ticket_id": "T-1003",
+    "title": "Production database latency spike",
+    "status": "open",
+    "priority": "P1",
+    "assignee": "platform-team",
+    "summary": "Checkout API p95 latency exceeded 2s for 10 minutes.",
+    "internal_notes": "Pager triggered; check connection pool saturation."
+  }
+]

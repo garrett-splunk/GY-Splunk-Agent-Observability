@@ -1,0 +1,20 @@
+[
+  {
+    "id": "kb-vpn-reset",
+    "title": "Reset VPN password",
+    "keywords": ["vpn", "password", "reset", "credentials"],
+    "content": "To reset your VPN password: open the Acme Identity Portal, choose VPN Access, click Reset Password, and complete MFA. New credentials sync within 5 minutes."
+  },
+  {
+    "id": "kb-sla",
+    "title": "Incident SLA definitions",
+    "keywords": ["sla", "p1", "p2", "priority", "incident"],
+    "content": "P1 SLA: initial response within 15 minutes; resolution target 4 hours. P2 SLA: response within 1 hour; resolution target 8 hours. P3 SLA: response within 4 hours; resolution target 2 business days."
+  },
+  {
+    "id": "kb-laptop-wifi",
+    "title": "Corporate laptop Wi-Fi troubleshooting",
+    "keywords": ["wifi", "wireless", "laptop", "network"],
+    "content": "Forget and rejoin CORP-WIFI, ensure 802.1x profile is installed, reboot, then run Network Diagnostics from the Acme IT menu."
+  }
+]

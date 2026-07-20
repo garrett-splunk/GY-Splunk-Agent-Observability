@@ -1,0 +1,11 @@
+streamlit
+galileo
+langchain
+langchain-core
+langchain-ollama
+langchain-openai
+langgraph
+openai
+python-dotenv
+toml
+pyyaml
