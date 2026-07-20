@@ -551,6 +551,9 @@ body {
   border-right: 1px solid color-mix(in oklab, #ea580c 35%, transparent);
   border-bottom: 1px solid color-mix(in oklab, #ea580c 35%, transparent);
 }
+.callout--concept {
+  --callout-color: #7c3aed;
+}
 
 /* Code blocks */
 .code-block {

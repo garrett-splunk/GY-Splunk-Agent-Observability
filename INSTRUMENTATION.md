@@ -8,6 +8,27 @@ Reference implementation: optional `galileo-golden-demo` clone
 
 ---
 
+## Concepts 101 (Splunk O11y → Galileo)
+
+| Splunk Observability Cloud | Galileo (this lab) |
+|---------------------------|-------------------|
+| AI trace / span in APM | Trace + LLM/tool/retriever spans in log stream |
+| Service / environment | **Project** (`galileo.project`) |
+| Deployment or data partition | **Log stream** (`galileo.log_stream`) |
+| Platform-side evaluation | **Metrics** on log stream (Step 10) |
+| OTEL GenAI instrumentation | **Galileo SDK** (`GalileoLogger`, `GalileoCallback`) |
+
+**Official docs**
+
+| Topic | Galileo | Splunk |
+|-------|---------|--------|
+| Overview | [Logging basics](https://docs.galileo.ai/sdk-api/logging/logging-basics) | [AI Agent Monitoring intro](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring) |
+| Manual SDK | [GalileoLogger](https://docs.galileo.ai/sdk-api/logging/galileo-logger) | [Code-based OTEL GenAI](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring/code-based-instrumentation) |
+| LangChain | [LangChain callback](https://docs.galileo.ai/sdk-api/third-party-integrations/langchain/langchain) | [Monitor AI traces](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/monitor-and-troubleshoot-ai-agents-and-applications/monitor-ai-traces-and-spans) |
+| Quality | [Metrics reference](https://docs.galileo.ai/sdk-api/metrics/metrics) | [Set up AI Agent Monitoring](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring) |
+
+---
+
 ## Lab root
 
 **Lab root** is the directory where you cloned or copied this repository. Default folder name after clone: `GY-Splunk-Agent-Observability`.
@@ -50,6 +71,9 @@ In Cursor:
 ## Exercise 1 — Galileo project, log stream, and environment bootstrap
 
 **Goal:** Create a Galileo project and log stream, point the lab at them in `config.yaml`, and confirm `setup_env.py` exports the right environment variables.
+
+> **Concept:** A **project** is your app boundary; a **log stream** is where traces and metrics attach (like choosing which service/deployment slice in APM).  
+> **Docs:** [Galileo log stream hierarchy](https://docs.galileo.ai/sdk-api/logging/logging-basics) · [Splunk AI Agent Monitoring setup](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring)
 
 ### Step 1a — Create a project and log stream in Galileo
 
@@ -119,6 +143,9 @@ After `streamlit run app.py`, the sidebar should show the same project and log s
 
 **File:** `app.py`  
 **Open:** `open -a Cursor app.py`
+
+> **Concept:** `GalileoLogger` sends LLM-native telemetry; `start_session` groups traces from one browser tab (session correlation).  
+> **Docs:** [GalileoLogger](https://docs.galileo.ai/sdk-api/logging/galileo-logger) · Compare: [Splunk OTEL GenAI](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring/code-based-instrumentation)
 
 ### Step 2a — Uncomment import (~line 23)
 
@@ -190,6 +217,9 @@ Send a chat message → Galileo console shows a new session like `IT Helpdesk As
 **File:** `agent.py`  
 **Open:** `open -a Cursor agent.py`
 
+> **Concept:** `GalileoCallback` auto-instruments LangGraph LLM and tool steps into child spans — like auto-instrumentation for chains. Use `start_new_trace=False` to avoid duplicate root traces.  
+> **Docs:** [LangChain / LangGraph integration](https://docs.galileo.ai/sdk-api/third-party-integrations/langchain/langchain)
+
 ### Step 3a — Uncomment import (~line 25)
 
 **Before:**
@@ -240,6 +270,9 @@ Keep `start_new_trace=False` and `flush_on_chain_end=False`.
 
 **File:** `helpers/trace_lifecycle.py`  
 **Open:** `open -a Cursor helpers/trace_lifecycle.py`
+
+> **Concept:** One **trace** = one user query. `start_trace` opens the root; `conclude` + `flush` ship buffered spans to Galileo (explicit flush — not continuous like an OTEL collector).  
+> **Docs:** [Logging basics — traces & spans](https://docs.galileo.ai/sdk-api/logging/logging-basics) · Splunk UI: [Monitor AI traces and spans](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/monitor-and-troubleshoot-ai-agents-and-applications/monitor-ai-traces-and-spans)
 
 ### Step 4a — Replace `ensure_trace_started`
 

@@ -2,6 +2,8 @@
 
 Hands-on workshop: build and instrument an IT Helpdesk AI assistant with the **Galileo Python SDK**, then demo hallucinations and prompt injection in Galileo / Splunk Agent Observability.
 
+**Audience:** Splunk Observability Cloud practitioners new to LLM/agent telemetry. Workshop Step **Concepts 101** maps Splunk terms to Galileo and links official docs at each instrumentation step.
+
 **Participant site:** https://garrett-splunk.github.io/GY-Splunk-Agent-Observability/ (or `workshop/index.html` locally via `python3 -m http.server 8095`)
 
 **Lab root:** the directory where participants cloned this repo (default folder name: `GY-Splunk-Agent-Observability`)
@@ -14,7 +16,7 @@ Hands-on workshop: build and instrument an IT Helpdesk AI assistant with the **G
 
 | Block | Duration | Section |
 |-------|----------|---------|
-| Intro + architecture | 10 min | Overview |
+| Intro + Concepts 101 | 10 min | Overview + Concepts |
 | Setup | 15 min | Steps 1–3 |
 | Instrumentation exercises | 25 min | Steps 4–6 |
 | Demo scenarios | 15 min | Steps 7–9 |

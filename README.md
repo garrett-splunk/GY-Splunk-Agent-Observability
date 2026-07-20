@@ -2,6 +2,8 @@
 
 A simplified **IT Helpdesk AI assistant** for practicing Galileo SDK instrumentation and running customer demos (hallucinations, prompt injection).
 
+**Audience:** Splunk Observability Cloud practitioners — the [workshop guide](workshop/index.html) includes **Concepts 101** callouts (Splunk → Galileo vocabulary) and links to [Galileo](https://docs.galileo.ai/sdk-api/logging/logging-basics) and [Splunk AI Agent Monitoring](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring) docs at each instrumentation step.
+
 **Workshop site (GitHub Pages):** https://garrett-splunk.github.io/GY-Splunk-Agent-Observability/
 
 **Repository:** https://github.com/garrett-splunk/GY-Splunk-Agent-Observability
