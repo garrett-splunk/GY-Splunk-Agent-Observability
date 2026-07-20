@@ -34,7 +34,8 @@ python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 cp .streamlit/secrets.toml.example .streamlit/secrets.toml
-# Edit secrets.toml — add galileo_api_key and LLM credentials
+# Open in Cursor: cursor .streamlit/secrets.toml
+# Or File → Open File in Cursor / VS Code and select .streamlit/secrets.toml
 streamlit run app.py
 ```
 
