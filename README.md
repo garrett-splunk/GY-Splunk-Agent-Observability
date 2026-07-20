@@ -98,12 +98,18 @@ GY-Splunk-Agent-Observability/   # lab root (your clone folder)
 ├── workshop/              # Splunk-themed step-by-step lab website
 │   ├── index.html
 │   ├── WORKSHOP_GUIDE.md
+│   ├── screenshots/       # Metrics UI walkthrough (Steps 10a–10c)
 │   ├── styles.css
 │   └── app.js
 ├── data/                  # Mock tickets + KB
 └── INSTRUMENTATION.md
 ```
 
-## Phase 2 (optional)
+## Steps 10–13 (Galileo console)
 
-Add Agent Control guardrails for live prompt-injection blocking — see **Phase 2** in [`DEMO.md`](DEMO.md) and golden demo README `block-prompt-injection` section.
+After wiring instrumentation and running demo Acts 1–3, the workshop covers:
+
+- **Step 10:** Configure log stream metrics (Configure Metrics → toggle scorers → **Compute** backfill) — screenshots in `workshop/screenshots/`
+- **Step 11:** Verify metric scores on traces
+- **Step 12:** Use **Signals** (Log Stream Insights) for AI-assisted failure analysis
+- **Step 13 (optional):** Agent Control guardrails — see [`DEMO.md`](DEMO.md) and golden demo README `block-prompt-injection` section

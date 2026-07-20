@@ -50,7 +50,8 @@
         <li class="sidebar-tree__item"><a href="#step-demo-injection" class="sidebar-tree__link" data-step="9"><span class="sidebar-tree__num">9</span> Demo: prompt injection</a></li>
         <li class="sidebar-tree__item"><a href="#step-metrics" class="sidebar-tree__link" data-step="10"><span class="sidebar-tree__num">10</span> Configure metrics</a></li>
         <li class="sidebar-tree__item"><a href="#step-verify" class="sidebar-tree__link" data-step="11"><span class="sidebar-tree__num">11</span> Verify in Galileo</a></li>
-        <li class="sidebar-tree__item"><a href="#phase2" class="sidebar-tree__link" data-step="0"><span class="sidebar-tree__num">+</span> Phase 2 guardrails</a></li>
+        <li class="sidebar-tree__item"><a href="#step-signals" class="sidebar-tree__link" data-step="12"><span class="sidebar-tree__num">12</span> Use Signals</a></li>
+        <li class="sidebar-tree__item"><a href="#step-guardrails" class="sidebar-tree__link" data-step="13"><span class="sidebar-tree__num">13</span> Agent Control guardrails</a></li>
         <li class="sidebar-tree__item"><a href="#troubleshoot" class="sidebar-tree__link" data-step="11"><span class="sidebar-tree__num">?</span> Troubleshooting</a></li>
         <li class="sidebar-tree__item"><a href="#wrapup" class="sidebar-tree__link" data-step="0"><span class="sidebar-tree__num">—</span> Wrap-up</a></li>
       </ul>
@@ -129,7 +130,8 @@
             <tr><td>Trace (APM)</td><td><strong>Trace</strong></td><td>One user query end-to-end (<code>Run Agent</code> root span)</td></tr>
             <tr><td>Span (APM)</td><td><strong>Span</strong></td><td>LLM call, tool call, or retriever step inside a trace</td></tr>
             <tr><td>Platform-side evaluation / quality</td><td><strong>Metrics</strong> on log stream</td><td>Scorers (Context Adherence, Prompt Injection) run on ingested traces</td></tr>
-            <tr><td>Detector / policy action</td><td><strong>Control</strong> (Phase 2)</td><td>Runtime guardrail that can deny or steer (e.g. <code>block-prompt-injection</code>)</td></tr>
+            <tr><td>AI trace insights / investigation</td><td><strong>Signals</strong> (Log Stream Insights)</td><td>AI-assisted analysis of trace + metric patterns with suggested fixes</td></tr>
+            <tr><td>Detector / policy action</td><td><strong>Control</strong> (Step 13)</td><td>Runtime guardrail that can deny or steer (e.g. <code>block-prompt-injection</code>)</td></tr>
           </tbody>
         </table>
 
@@ -711,27 +713,58 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
           <span class="step-time">~10 min</span>
         </div>
         <h2>Configure log stream metrics</h2>
-        <p>Enable evaluators on your log stream so Galileo <strong>scores</strong> live traces (observe mode). This is separate from Phase 2 <strong>Controls</strong> that block requests.</p>
+        <p>Enable evaluators on your log stream so Galileo <strong>scores</strong> live traces (observe mode). This is separate from Step 13 <strong>Controls</strong> that block requests.</p>
 
         <div class="callout callout--concept">
           <p class="callout__title">Splunk → Galileo: metrics vs detectors vs controls</p>
           <div class="callout__body">
             <ul>
               <li><strong>Log stream metrics (this step):</strong> Score traces after ingest — like platform-side evaluations in Splunk AI Agent Monitoring</li>
-              <li><strong>Controls (Phase 2):</strong> Block or steer <em>before</em> the LLM runs — closer to an inline policy action</li>
+              <li><strong>Controls (Step 13):</strong> Block or steer <em>before</em> the LLM runs — closer to an inline policy action</li>
               <li><strong>Splunk detectors:</strong> Alert on time-series in O11y; Galileo metrics here are per-trace/per-span quality scores</li>
             </ul>
-            <p>Official: <a href="https://docs.galileo.ai/sdk-api/metrics/metrics" target="_blank" rel="noopener">Galileo metrics reference</a> · <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring" target="_blank" rel="noopener">Splunk platform-side evaluations</a></p>
+            <p>Official: <a href="https://docs.galileo.ai/concepts/logging/configure-metrics/configure-metrics" target="_blank" rel="noopener">Configure log stream metrics</a> · <a href="https://docs.galileo.ai/sdk-api/metrics/metrics" target="_blank" rel="noopener">Metrics reference</a> · <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring" target="_blank" rel="noopener">Splunk platform-side evaluations</a></p>
           </div>
         </div>
 
-        <h3>Where to configure</h3>
+        <div class="callout callout--info">
+          <p class="callout__title">Prerequisite</p>
+          <div class="callout__body">
+            <p>You need at least one session in your log stream before <strong>Configure Metrics</strong> is available. Run Acts 1–3 in Streamlit (Steps 7–9) or <code>python scripts/validate_galileo_traces.py</code> first.</p>
+          </div>
+        </div>
+
+        <h3>10a — Open Configure Metrics</h3>
         <ol>
           <li>Open your Galileo console (same URL as <code>galileo_console_url</code> in secrets)</li>
           <li><strong>Projects</strong> → your project from <code>config.yaml</code></li>
           <li><strong>Log streams</strong> → your stream (e.g. <code>default</code>)</li>
-          <li><strong>Metrics</strong> tab → add the scorers below</li>
+          <li>Click <strong>Configure Metrics</strong> in the top-right of the log stream view</li>
         </ol>
+        <figure class="screenshot screenshot--full">
+          <img class="screenshot__img" src="screenshots/configure-metrics.png" alt="Configure Metrics button in the top right of the Galileo log stream view" loading="lazy" />
+          <figcaption class="screenshot__caption">10a — Click <strong>Configure Metrics</strong> (top right) to open the metrics pane.</figcaption>
+        </figure>
+
+        <h3>10b — Apply metrics</h3>
+        <p>In the Configure metrics pane, search or filter for each scorer below and <strong>toggle it on</strong>. When finished, click <strong>Save and close</strong>.</p>
+        <figure class="screenshot screenshot--full">
+          <img class="screenshot__img" src="screenshots/apply.png" alt="Configure metrics pane with Prompt Injection, Context Adherence, and Chunk Attribution Utilization toggled on" loading="lazy" />
+          <figcaption class="screenshot__caption">10b — Toggle on the workshop metrics, then <strong>Save and close</strong>.</figcaption>
+        </figure>
+
+        <h3>10c — Compute on existing logs</h3>
+        <p>Traces from Acts 1–3 were logged <em>before</em> you enabled metrics. Click <strong>Compute</strong> to recompute scores for those existing traces from your lab prompts.</p>
+        <figure class="screenshot screenshot--full">
+          <img class="screenshot__img" src="screenshots/compute.png" alt="Compute button to recompute metrics for past log stream traces" loading="lazy" />
+          <figcaption class="screenshot__caption">10c — Click <strong>Compute</strong> to apply metrics to traces already in the log stream.</figcaption>
+        </figure>
+        <div class="callout callout--info">
+          <p class="callout__title">New vs historical traces</p>
+          <div class="callout__body">
+            <p>After <strong>Save and close</strong>, new traces are scored automatically. <strong>Compute</strong> backfills Acts you already ran. Recompute may take ~30–60 seconds — refresh the log stream before Step 11.</p>
+          </div>
+        </div>
 
         <h3>Minimum workshop set</h3>
         <table>
@@ -776,26 +809,84 @@ python scripts/validate_galileo_traces.py</code></pre>
           <li>Project matches <code>galileo.project</code> in <code>config.yaml</code></li>
           <li>Log stream matches <code>galileo.log_stream</code></li>
           <li>Metrics enabled: Prompt Injection, Context Adherence, Chunk Attribution Utilization</li>
+          <li>After <strong>Compute</strong> (Step 10c), metric scores visible on Act 2 and Act 3 traces</li>
           <li>Live agent trace: root → LLM → tool → LLM</li>
           <li>Hallucination trace: retriever + LLM mismatch; Context Adherence fails</li>
           <li>Injection trace: Prompt Injection fails on malicious input</li>
         </ul>
       </section>
 
-      <section id="phase2">
-        <h2>Phase 2 — Live guardrails (optional)</h2>
-        <p>Move from <em>observe</em> (metrics) to <em>block</em> (Agent Control) for prompt injection.</p>
+      <section id="step-signals">
+        <div class="step-meta">
+          <span class="step-badge">Step 12</span>
+          <span class="step-time">~10 min</span>
+        </div>
+        <h2>Use Signals (Log Stream Insights)</h2>
+        <p>After traces are scored (Steps 10–11), Galileo <strong>Signals</strong> analyzes your log stream and surfaces failure patterns, root causes, and suggested fixes — accelerating the eval engineering loop.</p>
+
+        <div class="callout callout--concept">
+          <p class="callout__title">Splunk → Galileo: investigate trace quality</p>
+          <div class="callout__body">
+            <p>Signals is like AI-assisted investigation on your trace data: instead of manually scanning hundreds of spans, Galileo classifies issues and suggests remediation (prompt changes, metric tuning, control rules). Run this <em>after</em> metrics are computed so insights can reference scorer results.</p>
+            <p>Official: <a href="https://docs.galileo.ai/getting-started/sample-projects/simple-chatbot" target="_blank" rel="noopener">Simple Chatbot — Get insights</a></p>
+          </div>
+        </div>
+
+        <h3>Prerequisites</h3>
+        <ul>
+          <li>Traces from Acts 1–3 in your log stream</li>
+          <li>Step 10 metrics toggled on and <strong>Compute</strong> finished (scores on Act 2 hallucination and Act 3 injection traces)</li>
+        </ul>
+
+        <h3>Generate insights</h3>
+        <ol>
+          <li>Open your log stream with scored traces (failed Context Adherence on Act 2, elevated Prompt Injection on Act 3)</li>
+          <li>Click <strong>Log Stream Insights</strong> or <strong>Signals</strong> (label may vary by console version)</li>
+          <li>Wait for generation — review the insights panel (often on the right): summaries, root-cause analysis, remediation suggestions</li>
+          <li>Click an insight example to jump to affected traces and spans</li>
+        </ol>
+
+        <h3>Lab talking points</h3>
+        <ul>
+          <li><strong>Act 2:</strong> Connect hallucination findings to system prompt or retrieval grounding — Signals may suggest allowing the model to say “I don’t know”</li>
+          <li><strong>Act 3:</strong> Connect injection patterns to input validation or Agent Control (Step 13)</li>
+          <li><strong>Act 1:</strong> Baseline healthy traces help Signals contrast failure modes</li>
+        </ul>
+
+        <div class="callout callout--info">
+          <p class="callout__title">Optional: Signals in your IDE</p>
+          <div class="callout__body">
+            <p>Galileo MCP can feed recent Signals into Cursor or VS Code so your coding agent sees root-cause analysis and suggested fixes. See <a href="https://docs.galileo.ai/getting-started/mcp/setup-galileo-mcp" target="_blank" rel="noopener">Galileo MCP setup</a>.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="step-guardrails">
+        <div class="step-meta">
+          <span class="step-badge">Step 13</span>
+          <span class="step-time">~10 min</span>
+        </div>
+        <h2>Agent Control guardrails (optional)</h2>
+        <p>Move from <em>observe</em> (metrics, Signals) to <em>block</em> (Agent Control) for prompt injection.</p>
         <div class="callout callout--concept">
           <p class="callout__title">Splunk → Galileo: observe then enforce</p>
           <div class="callout__body">
-            <p>Steps 7–10 teach <strong>detection</strong> (metrics on traces). Phase 2 adds <strong>enforcement</strong> at the LLM step via Agent Control — the app returns a friendly block message and Galileo records a control evaluation span.</p>
+            <p>Steps 7–12 teach <strong>detection</strong> (metrics on traces, Signals for analysis). Step 13 adds <strong>enforcement</strong> at the LLM step via Agent Control — the app returns a friendly block message and Galileo records a control evaluation span.</p>
           </div>
         </div>
+
+        <h3>1. Enable in the lab</h3>
         <ol>
           <li><code>agent-control-sdk[galileo]</code> is already in <code>requirements.txt</code> — run <code>pip install -r requirements.txt</code></li>
           <li>Set <code>galileo.enable_agent_control: true</code> in <code>config.yaml</code> and restart Streamlit</li>
           <li>Optional: set <code>agent_control_agent_name</code> in <code>secrets.toml</code> (default: <code>it-helpdesk-assistant</code>)</li>
-          <li>In Galileo UI → Log stream → <strong>Controls</strong>, create <code>block-prompt-injection</code>:</li>
+          <li>Sidebar should show <strong>Agent Control enabled</strong></li>
+        </ol>
+
+        <h3>2. Create control in Galileo UI</h3>
+        <ol>
+          <li>Galileo console → your project → log stream → <strong>Controls</strong></li>
+          <li>Create a control named <code>block-prompt-injection</code> with these settings:</li>
         </ol>
         <table>
           <thead><tr><th>Setting</th><th>Value</th></tr></thead>
@@ -811,8 +902,19 @@ python scripts/validate_galileo_traces.py</code></pre>
             <tr><td>Payload field</td><td>input</td></tr>
           </tbody>
         </table>
-        <p>Keep the control <strong>disabled</strong> during Act 3 observe-only; enable for replay to show deny + evaluation span.</p>
-        <p>Details: <code>../DEMO.md</code> Phase 2 and <code>galileo-golden-demo/README.md</code> (~lines 470–484).</p>
+        <ol start="3">
+          <li><strong>Attach</strong> the control to your log stream</li>
+          <li>Use the enable/disable toggle to pace the demo (see below)</li>
+        </ol>
+        <p>Official: <a href="https://docs.galileo.ai/concepts/agent-control/overview" target="_blank" rel="noopener">Agent Control overview</a> · <a href="https://docs.galileo.ai/how-to-guides/agent-control/create-a-control" target="_blank" rel="noopener">Create a control</a> · <a href="https://docs.galileo.ai/how-to-guides/agent-control/initialize-and-configure-agent-control" target="_blank" rel="noopener">Initialize and configure</a> · <a href="https://docs.galileo.ai/how-to-guides/agent-control/monitor-a-control" target="_blank" rel="noopener">Monitor a control</a></p>
+
+        <h3>3. Demo script</h3>
+        <ol>
+          <li><strong>Observe-only (Act 3):</strong> Keep the control <strong>disabled</strong> — run an injection chip, show Prompt Injection metric fail on trace input</li>
+          <li><strong>Enforce:</strong> Enable <code>block-prompt-injection</code> on the log stream</li>
+          <li><strong>Replay Act 3:</strong> Send the same injection chip — app returns “blocked by Agent Control” and Galileo shows a control evaluation span</li>
+        </ol>
+        <p>Details: <code>../DEMO.md</code> Step 13 and <code>galileo-golden-demo/README.md</code> (~lines 470–484).</p>
       </section>
 
       <section id="troubleshoot">
@@ -836,9 +938,10 @@ python scripts/validate_galileo_traces.py</code></pre>
         <h2>Wrap-up</h2>
         <p>You built a LangGraph assistant, wired Galileo SDK instrumentation, and ran three demo scenarios. Next steps:</p>
         <ul>
+          <li>Steps 10–13: <a href="#step-metrics">Configure metrics</a> (with Compute backfill), <a href="#step-verify">verify scores</a>, <a href="#step-signals">use Signals</a>, optional <a href="#step-guardrails">Agent Control guardrails</a></li>
           <li>Explore the full multi-domain demo: optional <code>galileo-golden-demo</code> clone</li>
           <li>Production path: instrument with <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring/code-based-instrumentation" target="_blank" rel="noopener">Splunk OTEL GenAI</a> and view traces in <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/monitor-and-troubleshoot-ai-agents-and-applications/monitor-ai-traces-and-spans" target="_blank" rel="noopener">APM AI trace data</a></li>
-          <li>Deep dive: <a href="https://docs.galileo.ai/sdk-api/logging/logging-basics" target="_blank" rel="noopener">Galileo logging basics</a> and <a href="https://docs.galileo.ai/sdk-api/metrics/metrics" target="_blank" rel="noopener">metrics catalog</a></li>
+          <li>Deep dive: <a href="https://docs.galileo.ai/concepts/logging/configure-metrics/configure-metrics" target="_blank" rel="noopener">log stream metrics</a> · <a href="https://docs.galileo.ai/getting-started/sample-projects/simple-chatbot" target="_blank" rel="noopener">Signals / insights</a> · <a href="https://docs.galileo.ai/concepts/agent-control/overview" target="_blank" rel="noopener">Agent Control</a></li>
           <li>Customize <code>config.yaml</code> demo stories for your audience</li>
         </ul>
         <div class="callout callout--info">

@@ -20,8 +20,9 @@ Hands-on workshop: build and instrument an IT Helpdesk AI assistant with the **G
 | Setup | 15 min | Steps 1–3 |
 | Instrumentation exercises | 25 min | Steps 4–6 |
 | Demo scenarios | 15 min | Steps 7–9 |
-| Metrics + verify | 10 min | Steps 10–11 |
-| Wrap-up + Q&A | 10 min | Step 11 checklist |
+| Metrics + verify + Signals | 20 min | Steps 10–12 |
+| Guardrails (optional) | 10 min | Step 13 |
+| Wrap-up + Q&A | 10 min | Wrap-up |
 
 Adjust: skip Exercises 5–6 for shorter sessions; run hallucination demo even if live agent traces are incomplete.
 
@@ -48,7 +49,7 @@ Adjust: skip Exercises 5–6 for shorter sessions; run hallucination demo even i
 - [ ] Participants know how to create a **Galileo project** and **log stream** (Step 3.3) and set names in `config.yaml` (Step 3.4)
 - [ ] Facilitator project ready — default `galileo-lab-it-helpdesk` / `default` or custom names documented for the room
 - [ ] Repo cloned locally (`GY-Splunk-Agent-Observability` or equivalent path)
-- [ ] Log stream metrics enabled: Prompt Injection, Context Adherence, Chunk Attribution Utilization (Step 10)
+- [ ] Log stream metrics enabled via Configure Metrics UI (Step 10): Prompt Injection, Context Adherence, Chunk Attribution Utilization; Compute backfill run
 
 ---
 
@@ -81,9 +82,30 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 
 ### Step 10 — Configure metrics
 
-- Galileo → project → log stream → **Metrics** tab
-- Minimum set: Prompt Injection (Act 3), Context Adherence + Chunk Attribution (Act 2)
-- Validate: `python scripts/validate_galileo_traces.py`
+- Run Acts 1–3 first (or `validate_galileo_traces.py`) so the log stream has sessions
+- **10a:** Log stream → **Configure Metrics** (top right) — see `workshop/screenshots/configure-metrics.png`
+- **10b:** Toggle on Prompt Injection (Act 3), Context Adherence + Chunk Attribution (Act 2) → **Save and close** — see `apply.png`
+- **10c:** Click **Compute** to score existing traces from lab prompts — see `compute.png`
+- Validate export: `python scripts/validate_galileo_traces.py`
+- Official: [Configure log stream metrics](https://docs.galileo.ai/concepts/logging/configure-metrics/configure-metrics)
+
+### Step 11 — Verify in Galileo
+
+- Confirm metric scores on Act 2 and Act 3 traces after Compute (~30–60s)
+
+### Step 12 — Use Signals
+
+- Prerequisites: scored traces from Step 10c
+- Click **Log Stream Insights** / **Signals** on the log stream
+- Review insights panel: root cause + suggested fixes; click examples to jump to traces
+- Tie findings to Acts 2–3 (hallucination vs injection)
+- Optional: Galileo MCP for Cursor/VS Code
+
+### Step 13 — Agent Control guardrails (optional)
+
+- `galileo.enable_agent_control: true` in `config.yaml`; restart Streamlit
+- Galileo UI → Controls → create and attach `block-prompt-injection` (PRE, Deny, Prompt Injection SML ≥ 0.80)
+- Demo: Act 3 observe-only (control off) → enable control → replay Act 3 → block message + evaluation span
 
 ### Act 1 — Happy path (Step 7)
 
@@ -102,7 +124,7 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 
 - Injection chips prefill chat — presenter sends intentionally
 - Show malicious input preserved in trace
-- Optional Phase 2: enable `block-prompt-injection` control in Galileo UI
+- Optional Step 13: enable `block-prompt-injection` control in Galileo UI
 
 ---
 
@@ -120,14 +142,14 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 
 ---
 
-## Phase 2 extension (optional)
+## Step 13 extension — Agent Control guardrails (optional)
 
 For customers interested in **blocking** not just observing:
 
 1. `pip install -r requirements.txt` (includes `agent-control-sdk[galileo]`)
 2. Set `galileo.enable_agent_control: true` in `config.yaml`; restart Streamlit
-3. Create `block-prompt-injection` control on log stream (golden demo README ~470–484)
-4. Replay Act 3 — show deny span + Agent Control evaluation
+3. Galileo UI → log stream → **Controls** → create and attach `block-prompt-injection` (golden demo README ~470–484)
+4. Demo script: Act 3 with control disabled (observe) → enable control → replay Act 3 → deny span + Agent Control evaluation
 
 ---
 

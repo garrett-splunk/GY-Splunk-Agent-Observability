@@ -16,6 +16,8 @@ Reference implementation: optional `galileo-golden-demo` clone
 | Service / environment | **Project** (`galileo.project`) |
 | Deployment or data partition | **Log stream** (`galileo.log_stream`) |
 | Platform-side evaluation | **Metrics** on log stream (Step 10) |
+| AI trace insights | **Signals** / Log Stream Insights (Step 12) |
+| Runtime guardrails | **Agent Control** (Step 13, optional) |
 | OTEL GenAI instrumentation | **Galileo SDK** (`GalileoLogger`, `GalileoCallback`) |
 
 **Official docs**
@@ -26,6 +28,9 @@ Reference implementation: optional `galileo-golden-demo` clone
 | Manual SDK | [GalileoLogger](https://docs.galileo.ai/sdk-api/logging/galileo-logger) | [Code-based OTEL GenAI](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring/code-based-instrumentation) |
 | LangChain | [LangChain callback](https://docs.galileo.ai/sdk-api/third-party-integrations/langchain/langchain) | [Monitor AI traces](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/monitor-and-troubleshoot-ai-agents-and-applications/monitor-ai-traces-and-spans) |
 | Quality | [Metrics reference](https://docs.galileo.ai/sdk-api/metrics/metrics) | [Set up AI Agent Monitoring](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring) |
+| Configure metrics UI | [Log stream metrics](https://docs.galileo.ai/concepts/logging/configure-metrics/configure-metrics) | — |
+| Signals / insights | [Simple Chatbot — Get insights](https://docs.galileo.ai/getting-started/sample-projects/simple-chatbot) | [Monitor AI traces](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/monitor-and-troubleshoot-ai-agents-and-applications/monitor-ai-traces-and-spans) |
+| Agent Control | [Agent Control overview](https://docs.galileo.ai/concepts/agent-control/overview) | — |
 
 ---
 
@@ -370,6 +375,19 @@ def _log_tool_span(name: str, tool_input: str, tool_output: str, duration_ns: in
 | LLM spans but no tool spans | Callback not attached (Exercise 3) |
 | Hallucination button fails | API key not set; check secrets.toml |
 | Agent errors on hosted | `openai_api_key` invalid; switch to Local (Ollama) |
+
+---
+
+## After instrumentation — Galileo console (Steps 10–13)
+
+Workshop site: [Step 10 Configure metrics](https://garrett-splunk.github.io/GY-Splunk-Agent-Observability/#step-metrics) (screenshots: Configure Metrics → Apply → Compute)
+
+| Step | What to do |
+|------|------------|
+| **10** | Enable Prompt Injection, Context Adherence, Chunk Attribution on log stream; **Compute** backfill on Acts 1–3 |
+| **11** | Verify metric scores on hallucination and injection traces |
+| **12** | Run **Log Stream Insights** / **Signals**; review suggested fixes |
+| **13** (optional) | Enable Agent Control in `config.yaml`; create `block-prompt-injection` control; replay Act 3 |
 
 ---
 

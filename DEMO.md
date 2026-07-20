@@ -7,14 +7,22 @@ Use this script when presenting Galileo agent observability with the IT Helpdesk
 1. `streamlit run app.py` running at http://localhost:8501
 2. Galileo console open → project and log stream from `config.yaml`
 3. Complete INSTRUMENTATION exercises 1–4 for live agent traces (hallucination button works independently)
-4. **Step 10:** Enable log stream metrics (Prompt Injection, Context Adherence, Chunk Attribution Utilization)
+4. **Step 10:** Enable log stream metrics (Configure Metrics → toggle → Compute backfill)
 5. Optional: second monitor with Galileo trace detail view
 
 ---
 
-## Configure metrics (before demos)
+## Configure metrics (Step 10 — before verify and Signals)
 
-In Galileo → **Projects** → your project → **Log streams** → your stream → **Metrics**:
+In Galileo → **Projects** → your project → **Log streams** → your stream:
+
+| Substep | Action |
+|---------|--------|
+| **10a** | Click **Configure Metrics** (top right). Requires at least one session — run Acts 1–3 first. |
+| **10b** | Toggle on the metrics below → **Save and close** |
+| **10c** | Click **Compute** to score traces already logged from lab prompts |
+
+Workshop screenshots: `workshop/screenshots/configure-metrics.png`, `apply.png`, `compute.png`
 
 | Metric | Act | Notes |
 |--------|-----|-------|
@@ -30,7 +38,7 @@ python scripts/validate_galileo_traces.py
 
 Skip **Ground Truth Adherence** unless you run batch experiments with a CSV dataset.
 
----
+Official: [Configure log stream metrics](https://docs.galileo.ai/concepts/logging/configure-metrics/configure-metrics)
 
 ## Act 1 — Normal operation (happy path)
 
@@ -90,7 +98,26 @@ Skip **Ground Truth Adherence** unless you run batch experiments with a CSV data
 
 ---
 
-## Phase 2 — Live guardrail blocking (optional)
+## Use Signals (Step 12 — after metrics Compute)
+
+**Story:** “Galileo analyzes scored traces and suggests how to fix recurring failures.”
+
+1. Open log stream with Act 2 and Act 3 metric scores visible (Step 10c Compute finished)
+2. Click **Log Stream Insights** or **Signals**
+3. Review insights panel: summaries, root-cause analysis, remediation suggestions
+4. Click an insight example → jump to affected traces/spans
+
+**Point out:**
+
+- Act 2 hallucination patterns → prompt/grounding improvements
+- Act 3 injection patterns → input validation or Agent Control (Step 13)
+- Act 1 healthy traces as baseline contrast
+
+**Reference:** [Simple Chatbot — Get insights](https://docs.galileo.ai/getting-started/sample-projects/simple-chatbot)
+
+---
+
+## Step 13 — Agent Control guardrails (optional)
 
 When you want **denial**, not just observability:
 
@@ -107,16 +134,14 @@ When you want **denial**, not just observability:
    ```toml
    agent_control_agent_name = "it-helpdesk-assistant"
    ```
-4. Restart Streamlit — sidebar shows **Agent Control enabled (Phase 2)**
-5. In Galileo UI → Project → Log Stream → **Controls**, create **`block-prompt-injection`**:
-   - Stage: PRE
-   - Action: Deny
-   - Step types: llm
-   - Evaluator: Prompt Injection (SML), threshold ≥ 0.80, path: input
+4. Restart Streamlit — sidebar shows **Agent Control enabled**
+5. In Galileo UI → Project → Log Stream → **Controls**:
+   - Create **`block-prompt-injection`** (PRE, Deny, llm step, Prompt Injection SML ≥ 0.80, path: `input`)
+   - **Attach** to log stream; use enable/disable toggle for demo pacing
+6. **Observe:** Act 3 with control disabled — Prompt Injection metric fails on input
+7. **Enforce:** Enable control → replay Act 3 — guardrail blocks with visible evaluation span
 
-6. Replay Act 3 — guardrail blocks with visible evaluation span
-
-**Reference:** `galileo-golden-demo/README.md` section on `block-prompt-injection` (~lines 470–484)
+**Reference:** `galileo-golden-demo/README.md` section on `block-prompt-injection` (~lines 470–484) · [Agent Control overview](https://docs.galileo.ai/concepts/agent-control/overview)
 
 ---
 
