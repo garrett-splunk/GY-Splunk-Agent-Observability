@@ -17,11 +17,19 @@ from langgraph.graph import START, StateGraph
 from langgraph.graph.message import add_messages
 from langgraph.prebuilt import ToolNode, tools_condition
 
-from helpers.llm import LLMProvider, get_chat_model
+from helpers.llm import LLMProvider, SPAN_NAME, get_chat_model
 from helpers.trace_lifecycle import ensure_trace_started, finalize_trace
 from tools import TOOLS, set_galileo_logger
 
 from galileo.handlers.langchain import GalileoCallback
+
+try:
+    from agent_control import ControlViolationError, control
+    from helpers.agent_control_helpers import BLOCKED_MESSAGE
+
+    _AGENT_CONTROL_AVAILABLE = True
+except ImportError:
+    _AGENT_CONTROL_AVAILABLE = False
 
 
 class State(TypedDict):
@@ -101,12 +109,35 @@ class ITHelpdeskAgent:
             provider=self.llm_provider,
         ).bind_tools(self.tools)
 
-        async def invoke_chatbot(state: State):
-            messages = list(state["messages"])
-            if self.system_prompt:
-                messages = [SystemMessage(content=self.system_prompt)] + messages
-            result = await llm.ainvoke(messages)
-            return {"messages": [result]}
+        use_agent_control = (
+            _AGENT_CONTROL_AVAILABLE
+            and self.config.get("galileo", {}).get("enable_agent_control")
+            and self.galileo_logger is not None
+        )
+
+        if use_agent_control:
+
+            @control(step_name=SPAN_NAME)
+            async def _invoke_llm(msgs):
+                return await llm.ainvoke(msgs)
+
+            async def invoke_chatbot(state: State):
+                messages = list(state["messages"])
+                if self.system_prompt:
+                    messages = [SystemMessage(content=self.system_prompt)] + messages
+                try:
+                    result = await _invoke_llm(messages)
+                except ControlViolationError:
+                    result = AIMessage(content=BLOCKED_MESSAGE)
+                return {"messages": [result]}
+        else:
+
+            async def invoke_chatbot(state: State):
+                messages = list(state["messages"])
+                if self.system_prompt:
+                    messages = [SystemMessage(content=self.system_prompt)] + messages
+                result = await llm.ainvoke(messages)
+                return {"messages": [result]}
 
         graph_builder = StateGraph(State)
         graph_builder.add_node("chatbot", invoke_chatbot)

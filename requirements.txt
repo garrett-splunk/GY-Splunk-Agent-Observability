@@ -1,5 +1,6 @@
 streamlit
 galileo
+agent-control-sdk[galileo]>=8.0.0
 langchain
 langchain-core
 langchain-ollama

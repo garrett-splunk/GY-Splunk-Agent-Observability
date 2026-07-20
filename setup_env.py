@@ -24,6 +24,15 @@ def _derive_galileo_api_url(console_url: str, explicit_url: str = "") -> str:
     return ""
 
 
+def _derive_agent_control_url(console_url: str, explicit_url: str = "") -> str:
+    if explicit_url:
+        return explicit_url.rstrip("/")
+    console_url = (console_url or "").rstrip("/")
+    if not console_url:
+        return ""
+    return f"{console_url}/api/agent-control"
+
+
 def load_config(config_path: Optional[Path] = None) -> Dict[str, Any]:
     path = config_path or Path(__file__).parent / "config.yaml"
     with open(path, "r", encoding="utf-8") as handle:
@@ -64,6 +73,9 @@ def setup_environment(config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]
 
     galileo_api_key = secrets.get("galileo_api_key", "")
     if galileo_api_key and galileo_api_key not in ("...", ""):
+        agent_control_url = _derive_agent_control_url(
+            console_url, secrets.get("agent_control_url", "")
+        )
         env_vars.update(
             {
                 "GALILEO_API_KEY": galileo_api_key,
@@ -71,6 +83,14 @@ def setup_environment(config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]
                 "GALILEO_CONSOLE_URL": console_url,
                 "GALILEO_PROJECT": project_name,
                 "GALILEO_LOG_STREAM": log_stream,
+                "AGENT_CONTROL_URL": agent_control_url,
+                "AGENT_CONTROL_API_KEY": galileo_api_key,
+                "AGENT_CONTROL_AGENT_NAME": secrets.get(
+                    "agent_control_agent_name", "it-helpdesk-assistant"
+                ),
+                "AGENT_CONTROL_API_KEY_HEADER": secrets.get(
+                    "agent_control_api_key_header", "Galileo-API-Key"
+                ),
             }
         )
     else:

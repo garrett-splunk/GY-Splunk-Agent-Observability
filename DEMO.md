@@ -5,9 +5,30 @@ Use this script when presenting Galileo agent observability with the IT Helpdesk
 **Before you start:**
 
 1. `streamlit run app.py` running at http://localhost:8501
-2. Galileo console open → project **galileo-lab-it-helpdesk**, log stream **default**
+2. Galileo console open → project and log stream from `config.yaml`
 3. Complete INSTRUMENTATION exercises 1–4 for live agent traces (hallucination button works independently)
-4. Optional: second monitor with Galileo trace detail view
+4. **Step 10:** Enable log stream metrics (Prompt Injection, Context Adherence, Chunk Attribution Utilization)
+5. Optional: second monitor with Galileo trace detail view
+
+---
+
+## Configure metrics (before demos)
+
+In Galileo → **Projects** → your project → **Log streams** → your stream → **Metrics**:
+
+| Metric | Act | Notes |
+|--------|-----|-------|
+| **Prompt Injection** (SML) | 3 | Scores malicious user input on LLM `input` path |
+| **Context Adherence** | 2 | Flags LLM output that contradicts retriever context |
+| **Chunk Attribution Utilization** | 2 | Shows poor use of retrieved chunks |
+
+Validate export from terminal:
+
+```bash
+python scripts/validate_galileo_traces.py
+```
+
+Skip **Ground Truth Adherence** unless you run batch experiments with a CSV dataset.
 
 ---
 
@@ -42,7 +63,7 @@ Use this script when presenting Galileo agent observability with the IT Helpdesk
 
 - **Retriever span** — context says P1 SLA: 15 min response, 4 hr resolution
 - **LLM span** — output claims 24 hr response, 5 day resolution
-- Grounding / context adherence evaluators would flag this mismatch
+- Grounding / **Context Adherence** and **Chunk Attribution** metrics flag this mismatch (if enabled on log stream)
 
 **Talking point:** Edit `demo_hallucinations` in [`config.yaml`](config.yaml) to tailor stories for your audience (healthcare, finance, etc.) without code changes.
 
@@ -63,7 +84,7 @@ Use this script when presenting Galileo agent observability with the IT Helpdesk
 
 - Full injection text preserved in trace input
 - Agent should refuse or stay within policy (depends on model)
-- Observability captures the attempt even when the model behaves safely
+- **Prompt Injection** metric should score high on the malicious input (if enabled on log stream)
 
 **Demo tip:** Chips prefill but do not auto-send — you control the moment.
 
@@ -73,20 +94,27 @@ Use this script when presenting Galileo agent observability with the IT Helpdesk
 
 When you want **denial**, not just observability:
 
-1. Add to `requirements.txt`:
+1. Install dependencies (includes Agent Control SDK):
+   ```bash
+   pip install -r requirements.txt
    ```
-   agent-control-sdk[galileo]>=8.0.0
+2. In [`config.yaml`](config.yaml), set:
+   ```yaml
+   galileo:
+     enable_agent_control: true
    ```
-2. Wire Agent Control in `app.py` / `agent.py` (see golden demo):
-   - `galileo_logger.enable_agent_control()`
-   - `@control(step_name="IT Helpdesk Assistant")` on LLM invoke
-3. In Galileo UI → Project → Log Stream → Controls, create **`block-prompt-injection`**:
+3. Optional in `.streamlit/secrets.toml`:
+   ```toml
+   agent_control_agent_name = "it-helpdesk-assistant"
+   ```
+4. Restart Streamlit — sidebar shows **Agent Control enabled (Phase 2)**
+5. In Galileo UI → Project → Log Stream → **Controls**, create **`block-prompt-injection`**:
    - Stage: PRE
    - Action: Deny
    - Step types: llm
    - Evaluator: Prompt Injection (SML), threshold ≥ 0.80, path: input
 
-4. Replay Act 3 — guardrail blocks with visible evaluation span
+6. Replay Act 3 — guardrail blocks with visible evaluation span
 
 **Reference:** `galileo-golden-demo/README.md` section on `block-prompt-injection` (~lines 470–484)
 

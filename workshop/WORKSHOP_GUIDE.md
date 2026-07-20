@@ -18,7 +18,8 @@ Hands-on workshop: build and instrument an IT Helpdesk AI assistant with the **G
 | Setup | 15 min | Steps 1–3 |
 | Instrumentation exercises | 25 min | Steps 4–6 |
 | Demo scenarios | 15 min | Steps 7–9 |
-| Wrap-up + Q&A | 10 min | Step 10 |
+| Metrics + verify | 10 min | Steps 10–11 |
+| Wrap-up + Q&A | 10 min | Step 11 checklist |
 
 Adjust: skip Exercises 5–6 for shorter sessions; run hallucination demo even if live agent traces are incomplete.
 
@@ -45,7 +46,7 @@ Adjust: skip Exercises 5–6 for shorter sessions; run hallucination demo even i
 - [ ] Participants know how to create a **Galileo project** and **log stream** (Step 3.3) and set names in `config.yaml` (Step 3.4)
 - [ ] Facilitator project ready — default `galileo-lab-it-helpdesk` / `default` or custom names documented for the room
 - [ ] Repo cloned locally (`GY-Splunk-Agent-Observability` or equivalent path)
-- [ ] Facilitator tested: hallucination button + one chat query with full instrumentation
+- [ ] Log stream metrics enabled: Prompt Injection, Context Adherence, Chunk Attribution Utilization (Step 10)
 
 ---
 
@@ -75,6 +76,12 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 ---
 
 ## Talking points by act
+
+### Step 10 — Configure metrics
+
+- Galileo → project → log stream → **Metrics** tab
+- Minimum set: Prompt Injection (Act 3), Context Adherence + Chunk Attribution (Act 2)
+- Validate: `python scripts/validate_galileo_traces.py`
 
 ### Act 1 — Happy path (Step 7)
 
@@ -115,10 +122,10 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 
 For customers interested in **blocking** not just observing:
 
-1. Add `agent-control-sdk[galileo]` to requirements
-2. Wire `enable_agent_control()` + `@control` on LLM step (golden demo)
-3. Create `block-prompt-injection` control on log stream (README in golden demo ~470–484)
-4. Replay Act 3 — show deny/steer span
+1. `pip install -r requirements.txt` (includes `agent-control-sdk[galileo]`)
+2. Set `galileo.enable_agent_control: true` in `config.yaml`; restart Streamlit
+3. Create `block-prompt-injection` control on log stream (golden demo README ~470–484)
+4. Replay Act 3 — show deny span + Agent Control evaluation
 
 ---
 

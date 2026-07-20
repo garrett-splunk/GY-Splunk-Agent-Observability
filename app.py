@@ -22,6 +22,8 @@ from setup_env import load_config, setup_environment
 # INSTRUMENTATION (Exercise 2): uncomment when wiring per-session logger
 from galileo import GalileoLogger
 
+from helpers.agent_control_helpers import init_agent_control
+
 
 def _init_session_state(config: Dict[str, Any]) -> None:
     if "session_id" not in st.session_state:
@@ -42,7 +44,19 @@ def _create_galileo_logger(config: Dict[str, Any]):
     log_stream = galileo_cfg.get("log_stream", "default")
     if not os.environ.get("GALILEO_API_KEY"):
         return None
-    return GalileoLogger(project=project, log_stream=log_stream)
+    logger = GalileoLogger(project=project, log_stream=log_stream)
+    if galileo_cfg.get("enable_agent_control"):
+        try:
+            logger.enable_agent_control()
+            init_agent_control(
+                logger,
+                project_name=project,
+                log_stream=log_stream,
+                agent_description="IT Helpdesk assistant lab agent",
+            )
+        except Exception as exc:
+            print(f"⚠️  Agent Control setup failed: {exc}")
+    return logger
 
 
 def _start_galileo_session_if_needed(config: Dict[str, Any]) -> None:
@@ -176,6 +190,8 @@ def main() -> None:
             st.success("Galileo API key loaded")
         else:
             st.warning("Galileo not configured — see Exercise 1")
+        if galileo_cfg.get("enable_agent_control"):
+            st.info("Agent Control enabled (Phase 2)")
 
         st.divider()
         _render_demo_sidebar(config)

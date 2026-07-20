@@ -46,7 +46,8 @@
         <li class="sidebar-tree__item"><a href="#step-demo-happy" class="sidebar-tree__link" data-step="7"><span class="sidebar-tree__num">7</span> Demo: happy path</a></li>
         <li class="sidebar-tree__item"><a href="#step-demo-hallucination" class="sidebar-tree__link" data-step="8"><span class="sidebar-tree__num">8</span> Demo: hallucination</a></li>
         <li class="sidebar-tree__item"><a href="#step-demo-injection" class="sidebar-tree__link" data-step="9"><span class="sidebar-tree__num">9</span> Demo: prompt injection</a></li>
-        <li class="sidebar-tree__item"><a href="#step-verify" class="sidebar-tree__link" data-step="10"><span class="sidebar-tree__num">10</span> Verify in Galileo</a></li>
+        <li class="sidebar-tree__item"><a href="#step-metrics" class="sidebar-tree__link" data-step="10"><span class="sidebar-tree__num">10</span> Configure metrics</a></li>
+        <li class="sidebar-tree__item"><a href="#step-verify" class="sidebar-tree__link" data-step="11"><span class="sidebar-tree__num">11</span> Verify in Galileo</a></li>
         <li class="sidebar-tree__item"><a href="#phase2" class="sidebar-tree__link" data-step="0"><span class="sidebar-tree__num">+</span> Phase 2 guardrails</a></li>
         <li class="sidebar-tree__item"><a href="#troubleshoot" class="sidebar-tree__link" data-step="11"><span class="sidebar-tree__num">?</span> Troubleshooting</a></li>
         <li class="sidebar-tree__item"><a href="#wrapup" class="sidebar-tree__link" data-step="0"><span class="sidebar-tree__num">—</span> Wrap-up</a></li>
@@ -601,9 +602,57 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
         <p>Customize payloads in <code>config.yaml</code> → <code>demo_prompt_injections</code>.</p>
       </section>
 
-      <section id="step-verify">
+      <section id="step-metrics">
         <div class="step-meta">
           <span class="step-badge">Step 10</span>
+          <span class="step-time">~10 min</span>
+        </div>
+        <h2>Configure log stream metrics</h2>
+        <p>Enable evaluators on your log stream so Galileo <strong>scores</strong> live traces (observe mode). This is separate from Phase 2 <strong>Controls</strong> that block requests.</p>
+
+        <h3>Where to configure</h3>
+        <ol>
+          <li>Open your Galileo console (same URL as <code>galileo_console_url</code> in secrets)</li>
+          <li><strong>Projects</strong> → your project from <code>config.yaml</code></li>
+          <li><strong>Log streams</strong> → your stream (e.g. <code>default</code>)</li>
+          <li><strong>Metrics</strong> tab → add the scorers below</li>
+        </ol>
+
+        <h3>Minimum workshop set</h3>
+        <table>
+          <thead>
+            <tr><th>Metric / scorer</th><th>Demo act</th><th>Why</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><strong>Prompt Injection</strong> (SML)</td><td>Act 3</td><td>Flags injection chip payloads in LLM <code>input</code> even when the model responds safely</td></tr>
+            <tr><td><strong>Context Adherence</strong></td><td>Act 2</td><td>Detects hallucination trace where LLM output contradicts retriever context</td></tr>
+            <tr><td><strong>Chunk Attribution Utilization</strong></td><td>Act 2</td><td>Shows retrieved context was not used correctly in the LLM answer</td></tr>
+          </tbody>
+        </table>
+
+        <div class="callout callout--info">
+          <p class="callout__title">Skip for live chat-only demos</p>
+          <div class="callout__body">
+            <p><strong>Ground Truth Adherence</strong> is only useful with a CSV dataset and batch experiments (golden demo Experiments tab). Not required for this lab.</p>
+          </div>
+        </div>
+
+        <h3>Validate trace export</h3>
+        <p>From lab root, confirm Act 2 trace export before checking metric scores in the UI:</p>
+        <div class="code-block">
+          <div class="code-block__header">
+            <span class="code-block__file">terminal</span>
+            <button type="button" class="btn-copy" data-copy="cmd-metrics-validate">Copy</button>
+          </div>
+          <pre><code id="cmd-metrics-validate">source venv/bin/activate
+python scripts/validate_galileo_traces.py</code></pre>
+        </div>
+        <p>Then run Acts 1–3 in Streamlit and refresh the log stream in Galileo (~30–60 seconds).</p>
+      </section>
+
+      <section id="step-verify">
+        <div class="step-meta">
+          <span class="step-badge">Step 11</span>
           <span class="step-time">~5 min</span>
         </div>
         <h2>Verify in Galileo</h2>
@@ -611,22 +660,38 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
         <ul class="checklist">
           <li>Project matches <code>galileo.project</code> in <code>config.yaml</code></li>
           <li>Log stream matches <code>galileo.log_stream</code></li>
+          <li>Metrics enabled: Prompt Injection, Context Adherence, Chunk Attribution Utilization</li>
           <li>Live agent trace: root → LLM → tool → LLM</li>
-          <li>Hallucination trace: retriever + LLM mismatch</li>
-          <li>Injection trace: full malicious prompt in input</li>
+          <li>Hallucination trace: retriever + LLM mismatch; Context Adherence fails</li>
+          <li>Injection trace: Prompt Injection fails on malicious input</li>
         </ul>
       </section>
 
       <section id="phase2">
         <h2>Phase 2 — Live guardrails (optional)</h2>
-        <p>Move from <em>observe</em> to <em>block</em> prompt injection using Agent Control.</p>
+        <p>Move from <em>observe</em> (metrics) to <em>block</em> (Agent Control) for prompt injection.</p>
         <ol>
-          <li>Add <code>agent-control-sdk[galileo]</code> to requirements</li>
-          <li>Wire <code>enable_agent_control()</code> and <code>@control</code> on the LLM step (see golden demo)</li>
-          <li>Create <code>block-prompt-injection</code> control on the log stream in Galileo UI</li>
-          <li>Replay Act 3 — show deny/steer evaluation span</li>
+          <li><code>agent-control-sdk[galileo]</code> is already in <code>requirements.txt</code> — run <code>pip install -r requirements.txt</code></li>
+          <li>Set <code>galileo.enable_agent_control: true</code> in <code>config.yaml</code> and restart Streamlit</li>
+          <li>Optional: set <code>agent_control_agent_name</code> in <code>secrets.toml</code> (default: <code>it-helpdesk-assistant</code>)</li>
+          <li>In Galileo UI → Log stream → <strong>Controls</strong>, create <code>block-prompt-injection</code>:</li>
         </ol>
-        <p>Details: <code>galileo-golden-demo/README.md</code> (~lines 470–484) and <code>../DEMO.md</code>.</p>
+        <table>
+          <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Stage</td><td>PRE</td></tr>
+            <tr><td>Action</td><td>Deny</td></tr>
+            <tr><td>Execution environment</td><td>Server</td></tr>
+            <tr><td>Step types</td><td>llm</td></tr>
+            <tr><td>Evaluator path</td><td><code>input</code></td></tr>
+            <tr><td>Scorer label</td><td>Prompt Injection (SML)</td></tr>
+            <tr><td>Threshold</td><td>0.80</td></tr>
+            <tr><td>Operator</td><td>gte</td></tr>
+            <tr><td>Payload field</td><td>input</td></tr>
+          </tbody>
+        </table>
+        <p>Keep the control <strong>disabled</strong> during Act 3 observe-only; enable for replay to show deny + evaluation span.</p>
+        <p>Details: <code>../DEMO.md</code> Phase 2 and <code>galileo-golden-demo/README.md</code> (~lines 470–484).</p>
       </section>
 
       <section id="troubleshoot">
