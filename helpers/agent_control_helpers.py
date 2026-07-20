@@ -2,7 +2,7 @@
 Agent Control helpers — optional Phase 2 guardrails for the IT Helpdesk lab.
 
 Enable with galileo.enable_agent_control: true in config.yaml and create
-block-prompt-injection on the log stream in the Galileo UI.
+block-prompt-injection on the log stream in the Splunk Agent Observability (Galileo) UI.
 """
 import os
 
@@ -34,11 +34,11 @@ def init_agent_control(
     agent_description: str = "IT Helpdesk assistant lab agent",
     force: bool = False,
 ) -> bool:
-    """Initialize Agent Control for the current Galileo logger/session."""
+    """Initialize Agent Control for the current Splunk Agent Observability (Galileo) logger/session."""
     global _initialized
 
     if galileo_logger is None:
-        print("⚠️  Agent Control not initialized (no Galileo logger)")
+        print("⚠️  Agent Control not initialized (no Splunk Agent Observability (Galileo) logger)")
         return False
 
     server_url = os.environ.get("AGENT_CONTROL_URL")

@@ -1,11 +1,11 @@
-# INSTRUMENTATION (Exercise 1): Create a Galileo project and log stream in the console,
+# INSTRUMENTATION (Exercise 1): Create a Splunk Agent Observability (Galileo) project and log stream in the console,
 # then set project and log_stream below to match those names exactly.
 # setup_env.py → GALILEO_PROJECT / GALILEO_LOG_STREAM env vars
 # app.py (Exercise 2) → GalileoLogger(project=..., log_stream=...)
 galileo:
   project: "GY-IT-Helpdesk-Demo"
   log_stream: "default"
-  # Phase 2: set true after creating block-prompt-injection control in Galileo UI
+  # Phase 2: set true after creating block-prompt-injection control in Splunk Agent Observability (Galileo) UI
   enable_agent_control: false
 
 ui:

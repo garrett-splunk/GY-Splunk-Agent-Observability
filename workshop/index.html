@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#FF007F" />
-  <title>Galileo Assistant Lab — Splunk Agent Observability</title>
+  <title>Splunk Agent Observability (Galileo) Assistant Lab — Splunk Agent Observability</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
@@ -21,7 +21,7 @@
       </a>
       <div class="header-actions">
         <a class="header-doc-link" href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring" target="_blank" rel="noopener">Splunk docs</a>
-        <a class="header-doc-link" href="https://docs.galileo.ai/sdk-api/logging/logging-basics" target="_blank" rel="noopener">Galileo docs</a>
+        <a class="header-doc-link" href="https://docs.galileo.ai/sdk-api/logging/logging-basics" target="_blank" rel="noopener">Splunk Agent Observability (Galileo) docs</a>
         <button type="button" class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
           <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
           <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -49,7 +49,7 @@
         <li class="sidebar-tree__item"><a href="#step-demo-hallucination" class="sidebar-tree__link" data-step="8"><span class="sidebar-tree__num">8</span> Demo: hallucination</a></li>
         <li class="sidebar-tree__item"><a href="#step-demo-injection" class="sidebar-tree__link" data-step="9"><span class="sidebar-tree__num">9</span> Demo: prompt injection</a></li>
         <li class="sidebar-tree__item"><a href="#step-metrics" class="sidebar-tree__link" data-step="10"><span class="sidebar-tree__num">10</span> Configure metrics</a></li>
-        <li class="sidebar-tree__item"><a href="#step-verify" class="sidebar-tree__link" data-step="11"><span class="sidebar-tree__num">11</span> Verify in Galileo</a></li>
+        <li class="sidebar-tree__item"><a href="#step-verify" class="sidebar-tree__link" data-step="11"><span class="sidebar-tree__num">11</span> Verify in Splunk Agent Observability (Galileo)</a></li>
         <li class="sidebar-tree__item"><a href="#step-signals" class="sidebar-tree__link" data-step="12"><span class="sidebar-tree__num">12</span> Use Signals</a></li>
         <li class="sidebar-tree__item"><a href="#step-guardrails" class="sidebar-tree__link" data-step="13"><span class="sidebar-tree__num">13</span> Agent Control guardrails</a></li>
         <li class="sidebar-tree__item"><a href="#troubleshoot" class="sidebar-tree__link" data-step="11"><span class="sidebar-tree__num">?</span> Troubleshooting</a></li>
@@ -64,22 +64,22 @@
     <main class="prose" id="content">
       <header class="hero" id="overview">
         <p class="eyebrow">Hands-on lab · ~60–90 minutes · AI observability 101</p>
-        <h1>Instrument an AI Assistant with Galileo</h1>
+        <h1>Instrument an AI Assistant with Splunk Agent Observability (Galileo)</h1>
         <p class="lead">
-          Starting from Splunk Observability Cloud? This lab teaches <strong>Galileo SDK</strong> instrumentation from scratch —
+          Starting from Splunk Observability Cloud? This lab teaches <strong>Splunk Agent Observability (Galileo) SDK</strong> instrumentation from scratch —
           projects, log streams, traces, spans, and evaluators — then connects those ideas to
           <strong>Splunk AI Agent Monitoring</strong> (traces, quality, and risk in O11y Cloud).
         </p>
         <div class="callout callout--concept">
           <p class="callout__title">Who this lab is for</p>
           <div class="callout__body">
-            <p>You know APM traces, services, and detectors in Splunk O11y, but you are new to <strong>LLM/agent telemetry</strong> and the Galileo console. Each instrumentation step includes a <strong>Splunk → Galileo</strong> concept callout and links to official docs.</p>
+            <p>You know APM traces, services, and detectors in Splunk O11y, but you are new to <strong>LLM/agent telemetry</strong> and the Splunk Agent Observability (Galileo) console. Each instrumentation step includes a <strong>Splunk → Splunk Agent Observability (Galileo)</strong> concept callout and links to official docs.</p>
           </div>
         </div>
         <div class="callout callout--info">
           <p class="callout__title">Key idea</p>
           <div class="callout__body">
-            <p>The app runs <em>before</em> you finish instrumentation. Comment blocks marked <code># INSTRUMENTATION:</code> are your exercises — uncomment and wire Galileo until traces appear in the console.</p>
+            <p>The app runs <em>before</em> you finish instrumentation. Comment blocks marked <code># INSTRUMENTATION:</code> are your exercises — uncomment and wire Splunk Agent Observability (Galileo) until traces appear in the console.</p>
           </div>
         </div>
         <div class="callout callout--info">
@@ -92,7 +92,7 @@
 
       <section>
         <h2>Architecture</h2>
-        <div class="flow-diagram" role="img" aria-label="Assistant to Galileo data flow">
+        <div class="flow-diagram" role="img" aria-label="Assistant to Splunk Agent Observability (Galileo) data flow">
           <div class="flow-node">
             <div class="flow-title">Streamlit UI</div>
             <div class="flow-sub">Chat + demo sidebar</div>
@@ -108,7 +108,7 @@
           </div>
           <div class="flow-arrow"><span>export</span></div>
           <div class="flow-node">
-            <div class="flow-title">Galileo Console</div>
+            <div class="flow-title">Splunk Agent Observability (Galileo) Console</div>
             <div class="flow-sub">Traces · evaluators · guardrails</div>
           </div>
         </div>
@@ -116,12 +116,12 @@
       </section>
 
       <section id="concepts">
-        <h2>Concepts 101 — Splunk O11y → Galileo</h2>
-        <p>Galileo is where you <strong>instrument and evaluate</strong> during development; Splunk AI Agent Monitoring is where you <strong>operate and correlate</strong> agent telemetry at scale in production. This lab uses the Galileo SDK directly — the same trace model can later flow into Splunk via OTEL GenAI or translators.</p>
+        <h2>Concepts 101 — Splunk O11y → Splunk Agent Observability (Galileo)</h2>
+        <p>Splunk Agent Observability (Galileo) is where you <strong>instrument and evaluate</strong> during development; Splunk AI Agent Monitoring is where you <strong>operate and correlate</strong> agent telemetry at scale in production. This lab uses the Splunk Agent Observability (Galileo) SDK directly — the same trace model can later flow into Splunk via OTEL GenAI or translators.</p>
 
         <table>
           <thead>
-            <tr><th>If you know Splunk O11y…</th><th>Galileo term in this lab</th><th>What it means here</th></tr>
+            <tr><th>If you know Splunk O11y…</th><th>Splunk Agent Observability (Galileo) term in this lab</th><th>What it means here</th></tr>
           </thead>
           <tbody>
             <tr><td>Environment / org</td><td><strong>Project</strong></td><td>Container for one app or use case (<code>config.yaml</code> → <code>galileo.project</code>)</td></tr>
@@ -139,7 +139,7 @@
           <p class="callout__title">Two paths into Splunk AI Agent Monitoring</p>
           <div class="callout__body">
             <ul>
-              <li><strong>This lab:</strong> Galileo Python SDK → Galileo console (learn instrumentation first)</li>
+              <li><strong>This lab:</strong> Splunk Agent Observability (Galileo) Python SDK → Splunk Agent Observability (Galileo) console (learn instrumentation first)</li>
               <li><strong>Production Splunk path:</strong> OpenTelemetry GenAI semantic conventions → Splunk OTEL Collector → <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/monitor-and-troubleshoot-ai-agents-and-applications/monitor-ai-traces-and-spans" target="_blank" rel="noopener">AI trace data in APM</a></li>
               <li><strong>Bridge path:</strong> Third-party SDK translators without rewriting app code — see <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring/translate-data-from-third-party-instrumentation-libraries" target="_blank" rel="noopener">Splunk translators docs</a></li>
             </ul>
@@ -149,7 +149,7 @@
         <h3>Official documentation</h3>
         <table>
           <thead>
-            <tr><th>Topic</th><th>Galileo</th><th>Splunk O11y Cloud</th></tr>
+            <tr><th>Topic</th><th>Splunk Agent Observability (Galileo)</th><th>Splunk O11y Cloud</th></tr>
           </thead>
           <tbody>
             <tr><td>Overview</td><td><a href="https://docs.galileo.ai/sdk-api/logging/logging-basics" target="_blank" rel="noopener">Logging &amp; instrumentation basics</a></td><td><a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring" target="_blank" rel="noopener">Introduction to AI Agent Monitoring</a></td></tr>
@@ -169,7 +169,7 @@
         <ul class="checklist">
           <li>Python <strong>3.10+</strong></li>
           <li><a href="https://ollama.com/" target="_blank" rel="noopener">Ollama</a> with <code>gemma4</code> pulled — <strong>or</strong> OpenAI API key</li>
-          <li>Galileo API key + access to Galileo console</li>
+          <li>Splunk Agent Observability (Galileo) API key + access to Splunk Agent Observability (Galileo) console</li>
           <li>~500 MB disk for Python venv + dependencies</li>
           <li>Ports <strong>8501</strong> (Streamlit app) and <strong>8095</strong> (this guide, optional) available</li>
         </ul>
@@ -229,13 +229,13 @@ python3 -m http.server 8095
           <span class="step-time">~5 min</span>
         </div>
         <h2>Configure secrets</h2>
-        <p>Copy the example secrets file and add your Galileo and LLM credentials. Never commit <code>secrets.toml</code>.</p>
+        <p>Copy the example secrets file and add your Splunk Agent Observability (Galileo) and LLM credentials. Never commit <code>secrets.toml</code>.</p>
 
         <div class="callout callout--concept">
-          <p class="callout__title">Splunk → Galileo: credentials &amp; routing</p>
+          <p class="callout__title">Splunk → Splunk Agent Observability (Galileo): credentials &amp; routing</p>
           <div class="callout__body">
             <p><code>galileo_api_key</code> is like an ingest token — it authorizes the SDK to send traces to your tenant. <code>galileo_console_url</code> must match the console where you created your project (not necessarily <code>app.galileo.ai</code> if you use a multitenant URL).</p>
-            <p>Official: <a href="https://docs.galileo.ai/sdk-api/logging/logging-basics" target="_blank" rel="noopener">Galileo env vars &amp; log stream hierarchy</a> · <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring" target="_blank" rel="noopener">Splunk: set up AI Agent Monitoring</a></p>
+            <p>Official: <a href="https://docs.galileo.ai/sdk-api/logging/logging-basics" target="_blank" rel="noopener">Splunk Agent Observability (Galileo) env vars &amp; log stream hierarchy</a> · <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring" target="_blank" rel="noopener">Splunk: set up AI Agent Monitoring</a></p>
           </div>
         </div>
 
@@ -280,22 +280,22 @@ python3 -m http.server 8095
         <h3>3.2 — Edit secrets</h3>
         <p>Set at minimum:</p>
         <ul>
-          <li><code>galileo_api_key</code> — from Galileo console (<strong>Settings → API keys</strong>)</li>
-          <li><code>galileo_console_url</code> — your Galileo instance URL</li>
+          <li><code>galileo_api_key</code> — from Splunk Agent Observability (Galileo) console (<strong>Settings → API keys</strong>)</li>
+          <li><code>galileo_console_url</code> — your Splunk Agent Observability (Galileo) instance URL</li>
           <li><code>openai_api_key</code> — if using Hosted provider (optional if using Ollama)</li>
         </ul>
 
-        <h3>3.3 — Create a Galileo project and log stream (Exercise 1a)</h3>
-        <p>Traces from this lab are organized by <strong>project</strong> and <strong>log stream</strong> in Galileo. Create both in the console before you wire instrumentation.</p>
+        <h3>3.3 — Create a Splunk Agent Observability (Galileo) project and log stream (Exercise 1a)</h3>
+        <p>Traces from this lab are organized by <strong>project</strong> and <strong>log stream</strong> in Splunk Agent Observability (Galileo). Create both in the console before you wire instrumentation.</p>
         <div class="callout callout--concept">
-          <p class="callout__title">Splunk → Galileo: project &amp; log stream</p>
+          <p class="callout__title">Splunk → Splunk Agent Observability (Galileo): project &amp; log stream</p>
           <div class="callout__body">
             <p>Think of a <strong>project</strong> as the app boundary (like an APM service or environment) and a <strong>log stream</strong> as the deployment or channel where traces and metrics live (like a filtered view you attach evaluators to).</p>
             <p>Official: <a href="https://docs.galileo.ai/sdk-api/logging/logging-basics" target="_blank" rel="noopener">Projects, log streams, sessions, traces, spans</a></p>
           </div>
         </div>
         <ol>
-          <li>Open your Galileo console (same base URL as <code>galileo_console_url</code> in secrets).</li>
+          <li>Open your Splunk Agent Observability (Galileo) console (same base URL as <code>galileo_console_url</code> in secrets).</li>
           <li><strong>Projects</strong> → <strong>New project</strong> / <strong>Create project</strong> — e.g. <code>galileo-lab-it-helpdesk</code> or <code>your-name-it-helpdesk-lab</code>.</li>
           <li>Open that project → <strong>Log streams</strong> → create a stream — e.g. <code>default</code> or <code>it-helpdesk-lab</code>.</li>
           <li>Write down the <strong>exact</strong> project name and log stream name (case-sensitive).</li>
@@ -329,7 +329,7 @@ python3 -m http.server 8095
             <button type="button" class="btn-copy" data-copy="cmd-3-4-yaml">Copy</button>
           </div>
           <pre><code id="cmd-3-4-yaml">galileo:
-  project: "galileo-lab-it-helpdesk"   # your Galileo project name
+  project: "galileo-lab-it-helpdesk"   # your Splunk Agent Observability (Galileo) project name
   log_stream: "default"                # your log stream name</code></pre>
         </div>
         <p><code>setup_env.py</code> reads these values into <code>GALILEO_PROJECT</code> and <code>GALILEO_LOG_STREAM</code>. Exercise 2 passes the same names to <code>GalileoLogger</code>. The Streamlit sidebar displays them once the app is running.</p>
@@ -381,7 +381,7 @@ streamlit run app.py</code></pre>
         <p>Complete <strong>Exercises 1–2</strong>. Each exercise below shows how to <strong>open the file in Cursor</strong> and exactly which lines to add or uncomment.</p>
 
         <div class="callout callout--concept">
-          <p class="callout__title">Splunk → Galileo: what Exercise 2 adds</p>
+          <p class="callout__title">Splunk → Splunk Agent Observability (Galileo): what Exercise 2 adds</p>
           <div class="callout__body">
             <p><code>GalileoLogger</code> is the SDK client that sends telemetry — similar in role to initializing an OTEL tracer provider, but aimed at LLM-native spans. <code>start_session</code> groups traces from one Streamlit tab (like correlating a user session in APM).</p>
             <p>Official: <a href="https://docs.galileo.ai/sdk-api/logging/galileo-logger" target="_blank" rel="noopener">GalileoLogger reference</a> · Compare later: <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring/code-based-instrumentation" target="_blank" rel="noopener">Splunk OTEL GenAI instrumentation</a></p>
@@ -400,7 +400,7 @@ streamlit run app.py</code></pre>
         <h3>Exercise 1 — Project, log stream, and <code>setup_env.py</code> (Steps 3.3–3.5)</h3>
         <p>Complete Exercise 1 in Step 3 before wiring the logger:</p>
         <ul>
-          <li><strong>3.3</strong> — Create a Galileo project and log stream in the console</li>
+          <li><strong>3.3</strong> — Create a Splunk Agent Observability (Galileo) project and log stream in the console</li>
           <li><strong>3.4</strong> — Set <code>galileo.project</code> and <code>galileo.log_stream</code> in <code>config.yaml</code></li>
           <li><strong>3.5</strong> — Verify env vars print the same names</li>
         </ul>
@@ -481,7 +481,7 @@ streamlit run app.py</code></pre>
         <div class="callout callout--info">
           <p class="callout__title">Checkpoint</p>
           <div class="callout__body">
-            <p>Sidebar shows <strong>Galileo API key loaded</strong>. Send a chat message — a new session named like <code>IT Helpdesk Assistant Lab Demo</code> appears in the Galileo console.</p>
+            <p>Sidebar shows <strong>Splunk Agent Observability (Galileo) API key loaded</strong>. Send a chat message — a new session named like <code>IT Helpdesk Assistant Lab Demo</code> appears in the Splunk Agent Observability (Galileo) console.</p>
           </div>
         </div>
       </section>
@@ -495,7 +495,7 @@ streamlit run app.py</code></pre>
         <p>Complete <strong>Exercises 3–4</strong> (and optional 5–6 below).</p>
 
         <div class="callout callout--concept">
-          <p class="callout__title">Splunk → Galileo: callbacks &amp; trace boundaries</p>
+          <p class="callout__title">Splunk → Splunk Agent Observability (Galileo): callbacks &amp; trace boundaries</p>
           <div class="callout__body">
             <p><strong>Exercise 3 — <code>GalileoCallback</code>:</strong> Auto-creates child spans for each LangGraph LLM and tool step (like auto-instrumentation). Set <code>start_new_trace=False</code> so you do not get duplicate root traces — one root per user message, many child spans underneath.</p>
             <p><strong>Exercise 4 — trace lifecycle:</strong> <code>start_trace</code> opens the root span; <code>conclude</code> + <code>flush</code> finish and ship it (spans are buffered until flush — unlike Splunk’s collector pipeline, you must flush explicitly here).</p>
@@ -596,7 +596,7 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
         <div class="callout callout--info">
           <p class="callout__title">Checkpoint</p>
           <div class="callout__body">
-            <p>Send “Look up ticket T-1001”. In Galileo, open trace <strong>Run Agent</strong> with nested LLM and <code>lookup_ticket</code> tool spans.</p>
+            <p>Send “Look up ticket T-1001”. In Splunk Agent Observability (Galileo), open trace <strong>Run Agent</strong> with nested LLM and <code>lookup_ticket</code> tool spans.</p>
           </div>
         </div>
 
@@ -608,7 +608,7 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
           </div>
           <pre><code id="cmd-ex5-open">open -a Cursor helpers/llm.py</code></pre>
         </div>
-        <p>Confirm lines ~34 and ~44 already pass <code>name=name</code> to <code>ChatOpenAI</code> / <code>ChatOllama</code>. After Exercise 3, LLM spans in Galileo should show <strong>IT Helpdesk Assistant</strong>.</p>
+        <p>Confirm lines ~34 and ~44 already pass <code>name=name</code> to <code>ChatOpenAI</code> / <code>ChatOllama</code>. After Exercise 3, LLM spans in Splunk Agent Observability (Galileo) should show <strong>IT Helpdesk Assistant</strong>.</p>
 
         <h3>Exercise 6 — Manual tool spans (optional)</h3>
         <div class="code-block">
@@ -643,15 +643,15 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
         <h2>Demo: happy path</h2>
         <p><strong>Act 1</strong> — show normal agent observability.</p>
         <div class="callout callout--concept">
-          <p class="callout__title">Splunk → Galileo: reading the waterfall</p>
+          <p class="callout__title">Splunk → Splunk Agent Observability (Galileo): reading the waterfall</p>
           <div class="callout__body">
-            <p>In Galileo you will see the same hierarchy you know from <strong>APM → AI trace data → waterfall</strong>: one trace per query, nested LLM and tool spans, inputs/outputs on each span. Splunk doc: <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/monitor-and-troubleshoot-ai-agents-and-applications/monitor-ai-traces-and-spans" target="_blank" rel="noopener">Monitor AI traces and spans</a></p>
+            <p>In Splunk Agent Observability (Galileo) you will see the same hierarchy you know from <strong>APM → AI trace data → waterfall</strong>: one trace per query, nested LLM and tool spans, inputs/outputs on each span. Splunk doc: <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/monitor-and-troubleshoot-ai-agents-and-applications/monitor-ai-traces-and-spans" target="_blank" rel="noopener">Monitor AI traces and spans</a></p>
           </div>
         </div>
         <ol>
           <li>In the app sidebar under <strong>Act 1 — Happy path</strong>, click <strong>Look up ticket T-1001</strong></li>
           <li>Wait for the agent response with ticket details</li>
-          <li>Open Galileo → project <code>galileo-lab-it-helpdesk</code> → latest trace</li>
+          <li>Open Splunk Agent Observability (Galileo) → project <code>galileo-lab-it-helpdesk</code> → latest trace</li>
         </ol>
         <p><strong>Point out:</strong> LLM planning step, tool execution, final synthesis. Try <strong>How do I reset my VPN password?</strong> to trigger <code>search_kb</code>.</p>
       </section>
@@ -664,16 +664,16 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
         <h2>Demo: hallucination</h2>
         <p><strong>Act 2</strong> — intentional grounding failure for evaluator demos.</p>
         <div class="callout callout--concept">
-          <p class="callout__title">Splunk → Galileo: quality vs latency</p>
+          <p class="callout__title">Splunk → Splunk Agent Observability (Galileo): quality vs latency</p>
           <div class="callout__body">
             <p>Splunk AI Agent Monitoring surfaces <strong>quality</strong> and <strong>risk</strong> on spans after ingest. Here, <strong>Context Adherence</strong> (Step 10) is the scorer that flags when the LLM answer contradicts retrieved context — even if the model sounds confident.</p>
-            <p>Official: <a href="https://docs.galileo.ai/sdk-api/metrics/metrics" target="_blank" rel="noopener">Galileo built-in metrics</a></p>
+            <p>Official: <a href="https://docs.galileo.ai/sdk-api/metrics/metrics" target="_blank" rel="noopener">Splunk Agent Observability (Galileo) built-in metrics</a></p>
           </div>
         </div>
         <ol>
           <li>Sidebar → <strong>Act 2 — Hallucination</strong></li>
-          <li>Click <strong>Log Hallucination to Galileo</strong></li>
-          <li>Open the new trace in Galileo console</li>
+          <li>Click <strong>Log Hallucination to Splunk Agent Observability (Galileo)</strong></li>
+          <li>Open the new trace in Splunk Agent Observability (Galileo) console</li>
         </ol>
         <div class="callout callout--warn">
           <p class="callout__title">Compare context vs output</p>
@@ -693,7 +693,7 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
         <h2>Demo: prompt injection</h2>
         <p><strong>Act 3</strong> — show malicious input captured in traces.</p>
         <div class="callout callout--concept">
-          <p class="callout__title">Splunk → Galileo: security risk on input</p>
+          <p class="callout__title">Splunk → Splunk Agent Observability (Galileo): security risk on input</p>
           <div class="callout__body">
             <p>Even when the model refuses safely, observability must preserve the <strong>full attack string</strong> in trace input. The <strong>Prompt Injection</strong> metric (Step 10) scores that input — analogous to risk signals on the AI trace data page in Splunk O11y.</p>
           </div>
@@ -702,7 +702,7 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
           <li>Sidebar → <strong>Act 3 — Prompt injection</strong></li>
           <li>Click an example chip (e.g. <strong>Ignore instructions</strong>)</li>
           <li>Review prefilled text in chat — send intentionally</li>
-          <li>Show trace input in Galileo</li>
+          <li>Show trace input in Splunk Agent Observability (Galileo)</li>
         </ol>
         <p>Customize payloads in <code>config.yaml</code> → <code>demo_prompt_injections</code>.</p>
       </section>
@@ -713,15 +713,15 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
           <span class="step-time">~10 min</span>
         </div>
         <h2>Configure log stream metrics</h2>
-        <p>Enable evaluators on your log stream so Galileo <strong>scores</strong> live traces (observe mode). This is separate from Step 13 <strong>Controls</strong> that block requests.</p>
+        <p>Enable evaluators on your log stream so Splunk Agent Observability (Galileo) <strong>scores</strong> live traces (observe mode). This is separate from Step 13 <strong>Controls</strong> that block requests.</p>
 
         <div class="callout callout--concept">
-          <p class="callout__title">Splunk → Galileo: metrics vs detectors vs controls</p>
+          <p class="callout__title">Splunk → Splunk Agent Observability (Galileo): metrics vs detectors vs controls</p>
           <div class="callout__body">
             <ul>
               <li><strong>Log stream metrics (this step):</strong> Score traces after ingest — like platform-side evaluations in Splunk AI Agent Monitoring</li>
               <li><strong>Controls (Step 13):</strong> Block or steer <em>before</em> the LLM runs — closer to an inline policy action</li>
-              <li><strong>Splunk detectors:</strong> Alert on time-series in O11y; Galileo metrics here are per-trace/per-span quality scores</li>
+              <li><strong>Splunk detectors:</strong> Alert on time-series in O11y; Splunk Agent Observability (Galileo) metrics here are per-trace/per-span quality scores</li>
             </ul>
             <p>Official: <a href="https://docs.galileo.ai/concepts/logging/configure-metrics/configure-metrics" target="_blank" rel="noopener">Configure log stream metrics</a> · <a href="https://docs.galileo.ai/sdk-api/metrics/metrics" target="_blank" rel="noopener">Metrics reference</a> · <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring" target="_blank" rel="noopener">Splunk platform-side evaluations</a></p>
           </div>
@@ -736,13 +736,13 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
 
         <h3>10a — Open Configure Metrics</h3>
         <ol>
-          <li>Open your Galileo console (same URL as <code>galileo_console_url</code> in secrets)</li>
+          <li>Open your Splunk Agent Observability (Galileo) console (same URL as <code>galileo_console_url</code> in secrets)</li>
           <li><strong>Projects</strong> → your project from <code>config.yaml</code></li>
           <li><strong>Log streams</strong> → your stream (e.g. <code>default</code>)</li>
           <li>Click <strong>Configure Metrics</strong> in the top-right of the log stream view</li>
         </ol>
         <figure class="screenshot screenshot--full">
-          <img class="screenshot__img" src="screenshots/configure-metrics.png" alt="Configure Metrics button in the top right of the Galileo log stream view" loading="lazy" />
+          <img class="screenshot__img" src="screenshots/configure-metrics.png" alt="Configure Metrics button in the top right of the Splunk Agent Observability (Galileo) log stream view" loading="lazy" />
           <figcaption class="screenshot__caption">10a — Click <strong>Configure Metrics</strong> (top right) to open the metrics pane.</figcaption>
         </figure>
 
@@ -795,7 +795,7 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
           <pre><code id="cmd-metrics-validate">source venv/bin/activate
 python scripts/validate_galileo_traces.py</code></pre>
         </div>
-        <p>Then run Acts 1–3 in Streamlit and refresh the log stream in Galileo (~30–60 seconds).</p>
+        <p>Then run Acts 1–3 in Streamlit and refresh the log stream in Splunk Agent Observability (Galileo) (~30–60 seconds).</p>
       </section>
 
       <section id="step-verify">
@@ -803,8 +803,8 @@ python scripts/validate_galileo_traces.py</code></pre>
           <span class="step-badge">Step 11</span>
           <span class="step-time">~5 min</span>
         </div>
-        <h2>Verify in Galileo</h2>
-        <p>Complete this checklist in the Galileo console (open the project and log stream you set in <code>config.yaml</code>):</p>
+        <h2>Verify in Splunk Agent Observability (Galileo)</h2>
+        <p>Complete this checklist in the Splunk Agent Observability (Galileo) console (open the project and log stream you set in <code>config.yaml</code>):</p>
         <ul class="checklist">
           <li>Project matches <code>galileo.project</code> in <code>config.yaml</code></li>
           <li>Log stream matches <code>galileo.log_stream</code></li>
@@ -822,12 +822,12 @@ python scripts/validate_galileo_traces.py</code></pre>
           <span class="step-time">~10 min</span>
         </div>
         <h2>Use Signals (Log Stream Insights)</h2>
-        <p>After traces are scored (Steps 10–11), Galileo <strong>Signals</strong> analyzes your log stream and surfaces failure patterns, root causes, and suggested fixes — accelerating the eval engineering loop.</p>
+        <p>After traces are scored (Steps 10–11), Splunk Agent Observability (Galileo) <strong>Signals</strong> analyzes your log stream and surfaces failure patterns, root causes, and suggested fixes — accelerating the eval engineering loop.</p>
 
         <div class="callout callout--concept">
-          <p class="callout__title">Splunk → Galileo: investigate trace quality</p>
+          <p class="callout__title">Splunk → Splunk Agent Observability (Galileo): investigate trace quality</p>
           <div class="callout__body">
-            <p>Signals is like AI-assisted investigation on your trace data: instead of manually scanning hundreds of spans, Galileo classifies issues and suggests remediation (prompt changes, metric tuning, control rules). Run this <em>after</em> metrics are computed so insights can reference scorer results.</p>
+            <p>Signals is like AI-assisted investigation on your trace data: instead of manually scanning hundreds of spans, Splunk Agent Observability (Galileo) classifies issues and suggests remediation (prompt changes, metric tuning, control rules). Run this <em>after</em> metrics are computed so insights can reference scorer results.</p>
             <p>Official: <a href="https://docs.galileo.ai/getting-started/sample-projects/simple-chatbot" target="_blank" rel="noopener">Simple Chatbot — Get insights</a></p>
           </div>
         </div>
@@ -856,7 +856,7 @@ python scripts/validate_galileo_traces.py</code></pre>
         <div class="callout callout--info">
           <p class="callout__title">Optional: Signals in your IDE</p>
           <div class="callout__body">
-            <p>Galileo MCP can feed recent Signals into Cursor or VS Code so your coding agent sees root-cause analysis and suggested fixes. See <a href="https://docs.galileo.ai/getting-started/mcp/setup-galileo-mcp" target="_blank" rel="noopener">Galileo MCP setup</a>.</p>
+            <p>Splunk Agent Observability (Galileo) MCP can feed recent Signals into Cursor or VS Code so your coding agent sees root-cause analysis and suggested fixes. See <a href="https://docs.galileo.ai/getting-started/mcp/setup-galileo-mcp" target="_blank" rel="noopener">Splunk Agent Observability (Galileo) MCP setup</a>.</p>
           </div>
         </div>
       </section>
@@ -869,9 +869,9 @@ python scripts/validate_galileo_traces.py</code></pre>
         <h2>Agent Control guardrails (optional)</h2>
         <p>Move from <em>observe</em> (metrics, Signals) to <em>block</em> (Agent Control) for prompt injection.</p>
         <div class="callout callout--concept">
-          <p class="callout__title">Splunk → Galileo: observe then enforce</p>
+          <p class="callout__title">Splunk → Splunk Agent Observability (Galileo): observe then enforce</p>
           <div class="callout__body">
-            <p>Steps 7–12 teach <strong>detection</strong> (metrics on traces, Signals for analysis). Step 13 adds <strong>enforcement</strong> at the LLM step via Agent Control — the app returns a friendly block message and Galileo records a control evaluation span.</p>
+            <p>Steps 7–12 teach <strong>detection</strong> (metrics on traces, Signals for analysis). Step 13 adds <strong>enforcement</strong> at the LLM step via Agent Control — the app returns a friendly block message and Splunk Agent Observability (Galileo) records a control evaluation span.</p>
           </div>
         </div>
 
@@ -883,9 +883,9 @@ python scripts/validate_galileo_traces.py</code></pre>
           <li>Sidebar should show <strong>Agent Control enabled</strong></li>
         </ol>
 
-        <h3>2. Create control in Galileo UI</h3>
+        <h3>2. Create control in Splunk Agent Observability (Galileo) UI</h3>
         <ol>
-          <li>Galileo console → your project → log stream → <strong>Controls</strong></li>
+          <li>Splunk Agent Observability (Galileo) console → your project → log stream → <strong>Controls</strong></li>
           <li>Create a control named <code>block-prompt-injection</code> with these settings:</li>
         </ol>
         <table>
@@ -912,7 +912,7 @@ python scripts/validate_galileo_traces.py</code></pre>
         <ol>
           <li><strong>Observe-only (Act 3):</strong> Keep the control <strong>disabled</strong> — run an injection chip, show Prompt Injection metric fail on trace input</li>
           <li><strong>Enforce:</strong> Enable <code>block-prompt-injection</code> on the log stream</li>
-          <li><strong>Replay Act 3:</strong> Send the same injection chip — app returns “blocked by Agent Control” and Galileo shows a control evaluation span</li>
+          <li><strong>Replay Act 3:</strong> Send the same injection chip — app returns “blocked by Agent Control” and Splunk Agent Observability (Galileo) shows a control evaluation span</li>
         </ol>
         <p>Details: <code>../DEMO.md</code> Step 13 and <code>galileo-golden-demo/README.md</code> (~lines 470–484).</p>
       </section>
@@ -928,7 +928,7 @@ python scripts/validate_galileo_traces.py</code></pre>
             <tr><td>Duplicate root traces</td><td><code>GalileoCallback(start_new_trace=False)</code></td></tr>
             <tr><td>LLM spans, no tool spans</td><td>Attach callback in <code>agent.py</code> (Exercise 3)</td></tr>
             <tr><td>Ollama errors</td><td><code>ollama serve</code> and <code>ollama pull gemma4</code></td></tr>
-            <tr><td>Hallucination button fails</td><td>API key, or <code>config.yaml</code> project/log_stream names do not match Galileo console</td></tr>
+            <tr><td>Hallucination button fails</td><td>API key, or <code>config.yaml</code> project/log_stream names do not match Splunk Agent Observability (Galileo) console</td></tr>
             <tr><td>Traces in wrong project</td><td>Fix <code>galileo.project</code> / <code>log_stream</code> in <code>config.yaml</code>; restart Streamlit</td></tr>
           </tbody>
         </table>
@@ -936,7 +936,7 @@ python scripts/validate_galileo_traces.py</code></pre>
 
       <section id="wrapup">
         <h2>Wrap-up</h2>
-        <p>You built a LangGraph assistant, wired Galileo SDK instrumentation, and ran three demo scenarios. Next steps:</p>
+        <p>You built a LangGraph assistant, wired Splunk Agent Observability (Galileo) SDK instrumentation, and ran three demo scenarios. Next steps:</p>
         <ul>
           <li>Steps 10–13: <a href="#step-metrics">Configure metrics</a> (with Compute backfill), <a href="#step-verify">verify scores</a>, <a href="#step-signals">use Signals</a>, optional <a href="#step-guardrails">Agent Control guardrails</a></li>
           <li>Explore the full multi-domain demo: optional <code>galileo-golden-demo</code> clone</li>

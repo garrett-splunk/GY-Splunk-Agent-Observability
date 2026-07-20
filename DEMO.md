@@ -1,20 +1,20 @@
 # Demo Script (~5 minutes)
 
-Use this script when presenting Galileo agent observability with the IT Helpdesk lab app.
+Use this script when presenting Splunk Agent Observability (Galileo) agent observability with the IT Helpdesk lab app.
 
 **Before you start:**
 
 1. `streamlit run app.py` running at http://localhost:8501
-2. Galileo console open → project and log stream from `config.yaml`
+2. Splunk Agent Observability (Galileo) console open → project and log stream from `config.yaml`
 3. Complete INSTRUMENTATION exercises 1–4 for live agent traces (hallucination button works independently)
 4. **Step 10:** Enable log stream metrics (Configure Metrics → toggle → Compute backfill)
-5. Optional: second monitor with Galileo trace detail view
+5. Optional: second monitor with Splunk Agent Observability (Galileo) trace detail view
 
 ---
 
 ## Configure metrics (Step 10 — before verify and Signals)
 
-In Galileo → **Projects** → your project → **Log streams** → your stream:
+In Splunk Agent Observability (Galileo) → **Projects** → your project → **Log streams** → your stream:
 
 | Substep | Action |
 |---------|--------|
@@ -46,7 +46,7 @@ Official: [Configure log stream metrics](https://docs.galileo.ai/concepts/loggin
 
 1. In the sidebar under **Act 1 — Happy path**, click **Look up ticket T-1001**
 2. Agent calls `lookup_ticket` and returns VPN issue details
-3. Switch to Galileo → open the new trace
+3. Switch to Splunk Agent Observability (Galileo) → open the new trace
 
 **Point out:**
 
@@ -64,8 +64,8 @@ Official: [Configure log stream metrics](https://docs.galileo.ai/concepts/loggin
 **Story:** “Models can sound confident while contradicting retrieved context.”
 
 1. Sidebar → **Act 2 — Hallucination**
-2. Click **Log Hallucination to Galileo**
-3. Open the new trace in Galileo
+2. Click **Log Hallucination to Splunk Agent Observability (Galileo)**
+3. Open the new trace in Splunk Agent Observability (Galileo)
 
 **Point out:**
 
@@ -100,7 +100,7 @@ Official: [Configure log stream metrics](https://docs.galileo.ai/concepts/loggin
 
 ## Use Signals (Step 12 — after metrics Compute)
 
-**Story:** “Galileo analyzes scored traces and suggests how to fix recurring failures.”
+**Story:** “Splunk Agent Observability (Galileo) analyzes scored traces and suggests how to fix recurring failures.”
 
 1. Open log stream with Act 2 and Act 3 metric scores visible (Step 10c Compute finished)
 2. Click **Log Stream Insights** or **Signals**
@@ -135,7 +135,7 @@ When you want **denial**, not just observability:
    agent_control_agent_name = "it-helpdesk-assistant"
    ```
 4. Restart Streamlit — sidebar shows **Agent Control enabled**
-5. In Galileo UI → Project → Log Stream → **Controls**:
+5. In Splunk Agent Observability (Galileo) UI → Project → Log Stream → **Controls**:
    - Create **`block-prompt-injection`** (PRE, Deny, llm step, Prompt Injection SML ≥ 0.80, path: `input`)
    - **Attach** to log stream; use enable/disable toggle for demo pacing
 6. **Observe:** Act 3 with control disabled — Prompt Injection metric fails on input

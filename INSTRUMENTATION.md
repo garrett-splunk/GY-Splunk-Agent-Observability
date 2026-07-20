@@ -1,6 +1,6 @@
 # Instrumentation Lab Guide
 
-Practice wiring Galileo SDK observability into the IT Helpdesk assistant. Each exercise maps to `# INSTRUMENTATION:` blocks in the codebase.
+Practice wiring Splunk Agent Observability (Galileo) SDK observability into the IT Helpdesk assistant. Each exercise maps to `# INSTRUMENTATION:` blocks in the codebase.
 
 **Workshop site (with copy buttons):** https://garrett-splunk.github.io/GY-Splunk-Agent-Observability/
 
@@ -8,9 +8,9 @@ Reference implementation: optional `galileo-golden-demo` clone
 
 ---
 
-## Concepts 101 (Splunk O11y → Galileo)
+## Concepts 101 (Splunk O11y → Splunk Agent Observability (Galileo))
 
-| Splunk Observability Cloud | Galileo (this lab) |
+| Splunk Observability Cloud | Splunk Agent Observability (Galileo) (this lab) |
 |---------------------------|-------------------|
 | AI trace / span in APM | Trace + LLM/tool/retriever spans in log stream |
 | Service / environment | **Project** (`galileo.project`) |
@@ -18,11 +18,11 @@ Reference implementation: optional `galileo-golden-demo` clone
 | Platform-side evaluation | **Metrics** on log stream (Step 10) |
 | AI trace insights | **Signals** / Log Stream Insights (Step 12) |
 | Runtime guardrails | **Agent Control** (Step 13, optional) |
-| OTEL GenAI instrumentation | **Galileo SDK** (`GalileoLogger`, `GalileoCallback`) |
+| OTEL GenAI instrumentation | **Splunk Agent Observability (Galileo) SDK** (`GalileoLogger`, `GalileoCallback`) |
 
 **Official docs**
 
-| Topic | Galileo | Splunk |
+| Topic | Splunk Agent Observability (Galileo) | Splunk |
 |-------|---------|--------|
 | Overview | [Logging basics](https://docs.galileo.ai/sdk-api/logging/logging-basics) | [AI Agent Monitoring intro](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring) |
 | Manual SDK | [GalileoLogger](https://docs.galileo.ai/sdk-api/logging/galileo-logger) | [Code-based OTEL GenAI](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring/code-based-instrumentation) |
@@ -73,16 +73,16 @@ In Cursor:
 
 ---
 
-## Exercise 1 — Galileo project, log stream, and environment bootstrap
+## Exercise 1 — Splunk Agent Observability (Galileo) project, log stream, and environment bootstrap
 
-**Goal:** Create a Galileo project and log stream, point the lab at them in `config.yaml`, and confirm `setup_env.py` exports the right environment variables.
+**Goal:** Create a Splunk Agent Observability (Galileo) project and log stream, point the lab at them in `config.yaml`, and confirm `setup_env.py` exports the right environment variables.
 
 > **Concept:** A **project** is your app boundary; a **log stream** is where traces and metrics attach (like choosing which service/deployment slice in APM).  
-> **Docs:** [Galileo log stream hierarchy](https://docs.galileo.ai/sdk-api/logging/logging-basics) · [Splunk AI Agent Monitoring setup](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring)
+> **Docs:** [Splunk Agent Observability (Galileo) log stream hierarchy](https://docs.galileo.ai/sdk-api/logging/logging-basics) · [Splunk AI Agent Monitoring setup](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring)
 
-### Step 1a — Create a project and log stream in Galileo
+### Step 1a — Create a project and log stream in Splunk Agent Observability (Galileo)
 
-1. Open your Galileo console (same URL as `galileo_console_url` in `.streamlit/secrets.toml`, e.g. `https://app.galileo.ai`).
+1. Open your Splunk Agent Observability (Galileo) console (same URL as `galileo_console_url` in `.streamlit/secrets.toml`, e.g. `https://app.galileo.ai`).
 2. **Create a project** (wording may vary by UI version):
    - Go to **Projects** → **New project** / **Create project**
    - Name it something memorable, e.g. `galileo-lab-it-helpdesk` or `your-name-it-helpdesk-lab`
@@ -104,7 +104,7 @@ Edit the `galileo` block so `project` and `log_stream` match what you created in
 
 ```yaml
 galileo:
-  project: "galileo-lab-it-helpdesk"   # your Galileo project name
+  project: "galileo-lab-it-helpdesk"   # your Splunk Agent Observability (Galileo) project name
   log_stream: "default"                # your log stream name
 ```
 
@@ -140,7 +140,7 @@ project: galileo-lab-it-helpdesk
 log_stream: default
 ```
 
-After `streamlit run app.py`, the sidebar should show the same project and log stream. Traces from Exercises 2–4 and demo scenarios land in that log stream in the Galileo console.
+After `streamlit run app.py`, the sidebar should show the same project and log stream. Traces from Exercises 2–4 and demo scenarios land in that log stream in the Splunk Agent Observability (Galileo) console.
 
 ---
 
@@ -211,7 +211,7 @@ def _start_galileo_session_if_needed(config: Dict[str, Any]) -> None:
 streamlit run app.py
 ```
 
-Send a chat message → Galileo console shows a new session like `IT Helpdesk Assistant Lab Demo`.
+Send a chat message → Splunk Agent Observability (Galileo) console shows a new session like `IT Helpdesk Assistant Lab Demo`.
 
 **Reference:** `galileo-golden-demo/app.py` ~304–317 and ~1024–1076
 
@@ -276,7 +276,7 @@ Keep `start_new_trace=False` and `flush_on_chain_end=False`.
 **File:** `helpers/trace_lifecycle.py`  
 **Open:** `open -a Cursor helpers/trace_lifecycle.py`
 
-> **Concept:** One **trace** = one user query. `start_trace` opens the root; `conclude` + `flush` ship buffered spans to Galileo (explicit flush — not continuous like an OTEL collector).  
+> **Concept:** One **trace** = one user query. `start_trace` opens the root; `conclude` + `flush` ship buffered spans to Splunk Agent Observability (Galileo) (explicit flush — not continuous like an OTEL collector).  
 > **Docs:** [Logging basics — traces & spans](https://docs.galileo.ai/sdk-api/logging/logging-basics) · Splunk UI: [Monitor AI traces and spans](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/monitor-and-troubleshoot-ai-agents-and-applications/monitor-ai-traces-and-spans)
 
 ### Step 4a — Replace `ensure_trace_started`
@@ -359,11 +359,11 @@ def _log_tool_span(name: str, tool_input: str, tool_output: str, duration_ns: in
 
 ## Exercise 7 — Verification checklist
 
-- [ ] Sidebar shows **Galileo API key loaded**
+- [ ] Sidebar shows **Splunk Agent Observability (Galileo) API key loaded**
 - [ ] Send: `Look up ticket T-1001` → agent uses `lookup_ticket`
-- [ ] Galileo project `galileo-lab-it-helpdesk`, log stream `default`
+- [ ] Splunk Agent Observability (Galileo) project `galileo-lab-it-helpdesk`, log stream `default`
 - [ ] Trace contains: root → LLM → tool → LLM
-- [ ] Click **Log Hallucination to Galileo** → separate trace with retriever + LLM mismatch
+- [ ] Click **Log Hallucination to Splunk Agent Observability (Galileo)** → separate trace with retriever + LLM mismatch
 - [ ] Send a prompt-injection chip payload → input visible in trace input
 
 ### Troubleshooting
@@ -378,7 +378,7 @@ def _log_tool_span(name: str, tool_input: str, tool_output: str, duration_ns: in
 
 ---
 
-## After instrumentation — Galileo console (Steps 10–13)
+## After instrumentation — Splunk Agent Observability (Galileo) console (Steps 10–13)
 
 Workshop site: [Step 10 Configure metrics](https://garrett-splunk.github.io/GY-Splunk-Agent-Observability/#step-metrics) (screenshots: Configure Metrics → Apply → Compute)
 

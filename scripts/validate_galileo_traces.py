@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Validate Galileo trace export for workshop demo acts.
+Validate Splunk Agent Observability (Galileo) trace export for workshop demo acts.
 
 Run from lab root with venv active:
   python scripts/validate_galileo_traces.py
 
-After traces export, confirm metric scores in Galileo UI on log stream metrics:
+After traces export, confirm metric scores in Splunk Agent Observability (Galileo) UI on log stream metrics:
   - Prompt Injection (Act 3)
   - Context Adherence (Act 2)
   - Chunk Attribution Utilization (Act 2)
@@ -25,7 +25,7 @@ def main() -> int:
     log_stream = os.environ.get("GALILEO_LOG_STREAM", "n/a")
     console = os.environ.get("GALILEO_CONSOLE_URL", "n/a")
 
-    print("Galileo target:")
+    print("Splunk Agent Observability (Galileo) target:")
     print(f"  project:    {project}")
     print(f"  log_stream: {log_stream}")
     print(f"  console:    {console}")

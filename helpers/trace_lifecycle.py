@@ -1,5 +1,5 @@
 """
-Trace lifecycle helpers — start and finish Galileo traces around agent runs.
+Trace lifecycle helpers — start and finish Splunk Agent Observability (Galileo) traces around agent runs.
 
 INSTRUMENTATION (Exercise 4):
   Implement ensure_trace_started() and finalize_trace() using GalileoLogger APIs.
@@ -28,7 +28,7 @@ def ensure_trace_started(
     trace_input: Optional[str] = None,
     trace_name: str = "Run Agent",
 ) -> None:
-    """Start a Galileo trace when none is active (required before LLM/tool spans)."""
+    """Start a Splunk Agent Observability (Galileo) trace when none is active (required before LLM/tool spans)."""
     if not galileo_logger or galileo_logger.current_parent() is not None:
         return
     if trace_input is None and messages is not None:

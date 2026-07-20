@@ -1,8 +1,8 @@
-# Galileo Assistant Instrumentation Lab
+# Splunk Agent Observability (Galileo) Assistant Instrumentation Lab
 
-A simplified **IT Helpdesk AI assistant** for practicing Galileo SDK instrumentation and running customer demos (hallucinations, prompt injection).
+A simplified **IT Helpdesk AI assistant** for practicing Splunk Agent Observability (Galileo) SDK instrumentation and running customer demos (hallucinations, prompt injection).
 
-**Audience:** Splunk Observability Cloud practitioners — the [workshop guide](workshop/index.html) includes **Concepts 101** callouts (Splunk → Galileo vocabulary) and links to [Galileo](https://docs.galileo.ai/sdk-api/logging/logging-basics) and [Splunk AI Agent Monitoring](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring) docs at each instrumentation step.
+**Audience:** Splunk Observability Cloud practitioners — the [workshop guide](workshop/index.html) includes **Concepts 101** callouts (Splunk → Splunk Agent Observability (Galileo) vocabulary) and links to [Splunk Agent Observability (Galileo)](https://docs.galileo.ai/sdk-api/logging/logging-basics) and [Splunk AI Agent Monitoring](https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring) docs at each instrumentation step.
 
 **Workshop site (GitHub Pages):** https://garrett-splunk.github.io/GY-Splunk-Agent-Observability/
 
@@ -15,7 +15,7 @@ Fully wired reference: optional clone of the [`galileo-golden-demo`](https://git
 - LangGraph agent with two tools: `lookup_ticket`, `search_kb`
 - Streamlit chat UI with sidebar **Demo Scenarios**
 - `# INSTRUMENTATION:` comment blocks at every observability touchpoint
-- Working **hallucination demo** (manual Galileo spans) when `galileo_api_key` is configured
+- Working **hallucination demo** (manual Splunk Agent Observability (Galileo) spans) when `galileo_api_key` is configured
 - Config-driven demo stories in [`config.yaml`](config.yaml)
 
 ## Quick start
@@ -56,7 +56,7 @@ Open http://localhost:8501
 
 - Python 3.10+
 - [Ollama](https://ollama.com/) with `gemma4` pulled (default local model), **or** OpenAI API key
-- Galileo API key (for traces and demo scenarios)
+- Splunk Agent Observability (Galileo) API key (for traces and demo scenarios)
 
 ## Instrumentation lab
 
@@ -64,7 +64,7 @@ Follow [`INSTRUMENTATION.md`](INSTRUMENTATION.md) — seven exercises from env s
 
 | Exercise | File | What you wire |
 |----------|------|---------------|
-| 1 | `config.yaml` + `setup_env.py` | Galileo project/log stream + `GALILEO_*` env vars |
+| 1 | `config.yaml` + `setup_env.py` | Splunk Agent Observability (Galileo) project/log stream + `GALILEO_*` env vars |
 | 2 | `app.py` | Per-session `GalileoLogger` + `start_session` |
 | 3 | `agent.py` | `GalileoCallback` on graph invoke |
 | 4 | `agent.py` + `helpers/trace_lifecycle.py` | `ensure_trace_started` / `finalize_trace` |
@@ -77,7 +77,7 @@ Follow [`INSTRUMENTATION.md`](INSTRUMENTATION.md) — seven exercises from env s
 Use [`DEMO.md`](DEMO.md) for a ~5 minute scripted flow:
 
 1. **Happy path** — example query chips → clean agent trace
-2. **Hallucination** — sidebar button → context vs wrong answer in Galileo
+2. **Hallucination** — sidebar button → context vs wrong answer in Splunk Agent Observability (Galileo)
 3. **Prompt injection** — injection chips → malicious input in trace
 
 Customize scenarios in `config.yaml` under `demo_hallucinations` and `demo_prompt_injections`.
@@ -89,7 +89,7 @@ GY-Splunk-Agent-Observability/   # lab root (your clone folder)
 ├── app.py                 # Streamlit UI + demo sidebar
 ├── agent.py               # LangGraph agent
 ├── tools.py               # Ticket + KB tools
-├── config.yaml            # Galileo project, demo scenarios
+├── config.yaml            # Splunk Agent Observability (Galileo) project, demo scenarios
 ├── setup_env.py           # Secrets → env vars
 ├── helpers/
 │   ├── llm.py
@@ -105,7 +105,7 @@ GY-Splunk-Agent-Observability/   # lab root (your clone folder)
 └── INSTRUMENTATION.md
 ```
 
-## Steps 10–13 (Galileo console)
+## Steps 10–13 (Splunk Agent Observability (Galileo) console)
 
 After wiring instrumentation and running demo Acts 1–3, the workshop covers:
 

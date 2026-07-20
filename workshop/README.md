@@ -1,4 +1,4 @@
-# Galileo Assistant Lab — Workshop Site
+# Splunk Agent Observability (Galileo) Assistant Lab — Workshop Site
 
 Interactive step-by-step guide for the IT Helpdesk instrumentation lab. Same Splunk workshop theme as the Oracle DB and Kubernetes OTel labs.
 

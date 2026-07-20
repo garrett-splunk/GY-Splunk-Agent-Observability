@@ -1,8 +1,8 @@
-# Galileo Assistant Lab — Facilitator Guide
+# Splunk Agent Observability (Galileo) Assistant Lab — Facilitator Guide
 
-Hands-on workshop: build and instrument an IT Helpdesk AI assistant with the **Galileo Python SDK**, then demo hallucinations and prompt injection in Galileo / Splunk Agent Observability.
+Hands-on workshop: build and instrument an IT Helpdesk AI assistant with the **Splunk Agent Observability (Galileo) Python SDK**, then demo hallucinations and prompt injection in Splunk Agent Observability (Galileo) / Splunk Agent Observability.
 
-**Audience:** Splunk Observability Cloud practitioners new to LLM/agent telemetry. Workshop Step **Concepts 101** maps Splunk terms to Galileo and links official docs at each instrumentation step.
+**Audience:** Splunk Observability Cloud practitioners new to LLM/agent telemetry. Workshop Step **Concepts 101** maps Splunk terms to Splunk Agent Observability (Galileo) and links official docs at each instrumentation step.
 
 **Participant site:** https://garrett-splunk.github.io/GY-Splunk-Agent-Observability/ (or `workshop/index.html` locally via `python3 -m http.server 8095`)
 
@@ -32,7 +32,7 @@ Adjust: skip Exercises 5–6 for shorter sessions; run hallucination demo even i
 
 | Component | File | Outcome |
 |-----------|------|---------|
-| Project + log stream | `config.yaml` | Names match Galileo console; drive trace routing |
+| Project + log stream | `config.yaml` | Names match Splunk Agent Observability (Galileo) console; drive trace routing |
 | Env bootstrap | `setup_env.py` | `GALILEO_*` env vars from secrets + config |
 | Session logger | `app.py` | Per-tab `GalileoLogger` + `start_session` |
 | Auto spans | `agent.py` | `GalileoCallback` on LangGraph |
@@ -45,8 +45,8 @@ Adjust: skip Exercises 5–6 for shorter sessions; run hallucination demo even i
 
 - [ ] Python 3.10+ on participant machines
 - [ ] Ollama installed with `gemma4` pulled **or** OpenAI keys for hosted mode
-- [ ] Galileo API keys issued (ingest scope)
-- [ ] Participants know how to create a **Galileo project** and **log stream** (Step 3.3) and set names in `config.yaml` (Step 3.4)
+- [ ] Splunk Agent Observability (Galileo) API keys issued (ingest scope)
+- [ ] Participants know how to create a **Splunk Agent Observability (Galileo) project** and **log stream** (Step 3.3) and set names in `config.yaml` (Step 3.4)
 - [ ] Facilitator project ready — default `galileo-lab-it-helpdesk` / `default` or custom names documented for the room
 - [ ] Repo cloned locally (`GY-Splunk-Agent-Observability` or equivalent path)
 - [ ] Log stream metrics enabled via Configure Metrics UI (Step 10): Prompt Injection, Context Adherence, Chunk Attribution Utilization; Compute backfill run
@@ -89,7 +89,7 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 - Validate export: `python scripts/validate_galileo_traces.py`
 - Official: [Configure log stream metrics](https://docs.galileo.ai/concepts/logging/configure-metrics/configure-metrics)
 
-### Step 11 — Verify in Galileo
+### Step 11 — Verify in Splunk Agent Observability (Galileo)
 
 - Confirm metric scores on Act 2 and Act 3 traces after Compute (~30–60s)
 
@@ -99,18 +99,18 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 - Click **Log Stream Insights** / **Signals** on the log stream
 - Review insights panel: root cause + suggested fixes; click examples to jump to traces
 - Tie findings to Acts 2–3 (hallucination vs injection)
-- Optional: Galileo MCP for Cursor/VS Code
+- Optional: Splunk Agent Observability (Galileo) MCP for Cursor/VS Code
 
 ### Step 13 — Agent Control guardrails (optional)
 
 - `galileo.enable_agent_control: true` in `config.yaml`; restart Streamlit
-- Galileo UI → Controls → create and attach `block-prompt-injection` (PRE, Deny, Prompt Injection SML ≥ 0.80)
+- Splunk Agent Observability (Galileo) UI → Controls → create and attach `block-prompt-injection` (PRE, Deny, Prompt Injection SML ≥ 0.80)
 - Demo: Act 3 observe-only (control off) → enable control → replay Act 3 → block message + evaluation span
 
 ### Act 1 — Happy path (Step 7)
 
 - Agent chooses tools via LangGraph ReAct loop
-- Galileo trace: root → LLM (tool decision) → tool span → LLM (answer)
+- Splunk Agent Observability (Galileo) trace: root → LLM (tool decision) → tool span → LLM (answer)
 - Emphasize **named spans** (`IT Helpdesk Assistant`) for readable workflows
 
 ### Act 2 — Hallucination (Step 8)
@@ -124,7 +124,7 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 
 - Injection chips prefill chat — presenter sends intentionally
 - Show malicious input preserved in trace
-- Optional Step 13: enable `block-prompt-injection` control in Galileo UI
+- Optional Step 13: enable `block-prompt-injection` control in Splunk Agent Observability (Galileo) UI
 
 ---
 
@@ -133,10 +133,10 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 | Symptom | Fix |
 |---------|-----|
 | `ModuleNotFoundError: toml` | `pip install -r requirements.txt` |
-| Sidebar: Galileo not configured | Add `galileo_api_key` to secrets.toml, restart Streamlit |
+| Sidebar: Splunk Agent Observability (Galileo) not configured | Add `galileo_api_key` to secrets.toml, restart Streamlit |
 | Ollama connection error | `ollama serve`, `ollama pull gemma4` |
 | No agent traces | Complete Exercises 2–4; check callback flags |
-| Hallucination fails, chat works | API key missing, or `config.yaml` project/log_stream names do not match Galileo console |
+| Hallucination fails, chat works | API key missing, or `config.yaml` project/log_stream names do not match Splunk Agent Observability (Galileo) console |
 | Traces in wrong project | `galileo.project` / `log_stream` in `config.yaml` typo — must match console exactly |
 | Duplicate root traces | `start_new_trace=True` on callback — must be `False` |
 
@@ -148,7 +148,7 @@ For customers interested in **blocking** not just observing:
 
 1. `pip install -r requirements.txt` (includes `agent-control-sdk[galileo]`)
 2. Set `galileo.enable_agent_control: true` in `config.yaml`; restart Streamlit
-3. Galileo UI → log stream → **Controls** → create and attach `block-prompt-injection` (golden demo README ~470–484)
+3. Splunk Agent Observability (Galileo) UI → log stream → **Controls** → create and attach `block-prompt-injection` (golden demo README ~470–484)
 4. Demo script: Act 3 with control disabled (observe) → enable control → replay Act 3 → deny span + Agent Control evaluation
 
 ---
@@ -159,7 +159,7 @@ For customers interested in **blocking** not just observing:
 |----------|-------------------|
 | Oracle DB Monitoring | `Oracle-DB-Mon-Resources` |
 | OTel Demo on Kubernetes | https://garrett-splunk.github.io/OpenTelemetry-Kubernetes-Demo/ |
-| Galileo Golden Demo (full) | `galileo-golden-demo` |
+| Splunk Agent Observability (Galileo) Golden Demo (full) | `galileo-golden-demo` |
 
 ---
 

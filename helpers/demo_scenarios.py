@@ -1,7 +1,7 @@
 """
 Demo scenario helpers — hallucination traces and prompt-injection utilities.
 
-This module is a **working reference** for manual Galileo spans (retriever + LLM).
+This module is a **working reference** for manual Splunk Agent Observability (Galileo) spans (retriever + LLM).
 Use it alongside the INSTRUMENTATION exercises for callback-based agent tracing.
 
 Reference: ~/Desktop/galileo-golden-demo/helpers/hallucination_helpers.py

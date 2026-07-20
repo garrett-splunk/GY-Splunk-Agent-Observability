@@ -84,8 +84,8 @@ def _render_demo_sidebar(config: Dict[str, Any]) -> None:
         st.divider()
         st.markdown("**Act 2 — Hallucination**")
         st.caption("Logs a synthetic trace with correct context but wrong LLM answer.")
-        if st.button("Log Hallucination to Galileo", key="log_hallucination"):
-            with st.spinner("Logging hallucination to Galileo..."):
+        if st.button("Log Hallucination to Splunk Agent Observability (Galileo)", key="log_hallucination"):
+            with st.spinner("Logging hallucination to Splunk Agent Observability (Galileo)..."):
                 existing = (
                     st.session_state.get("galileo_logger")
                     if st.session_state.get("galileo_session_started")
@@ -106,7 +106,7 @@ def _render_demo_sidebar(config: Dict[str, Any]) -> None:
                         st.session_state.messages.append(
                             {"role": "assistant", "content": turn["answer"]}
                         )
-                    st.success("Hallucination logged — open Galileo console to compare context vs output.")
+                    st.success("Hallucination logged — open Splunk Agent Observability (Galileo) console to compare context vs output.")
                     st.rerun()
                 else:
                     st.error("Failed to log hallucination. Check secrets and INSTRUMENTATION.md.")
@@ -162,7 +162,7 @@ def _render_chat(config: Dict[str, Any], provider: str, model: Optional[str]) ->
 
 
 def main() -> None:
-    st.set_page_config(page_title="Galileo Assistant Lab", layout="wide")
+    st.set_page_config(page_title="Splunk Agent Observability (Galileo) Assistant Lab", layout="wide")
     config = setup_environment()
     _init_session_state(config)
 
@@ -183,13 +183,13 @@ def main() -> None:
 
         galileo_cfg = config.get("galileo", {})
         st.divider()
-        st.markdown("**Galileo target**")
+        st.markdown("**Splunk Agent Observability (Galileo) target**")
         st.text(f"Project: {galileo_cfg.get('project', 'n/a')}")
         st.text(f"Log stream: {galileo_cfg.get('log_stream', 'n/a')}")
         if os.environ.get("GALILEO_API_KEY"):
-            st.success("Galileo API key loaded")
+            st.success("Splunk Agent Observability (Galileo) API key loaded")
         else:
-            st.warning("Galileo not configured — see Exercise 1")
+            st.warning("Splunk Agent Observability (Galileo) not configured — see Exercise 1")
         if galileo_cfg.get("enable_agent_control"):
             st.info("Agent Control enabled (Phase 2)")
 

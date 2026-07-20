@@ -3,7 +3,7 @@ IT Helpdesk tools — in-memory ticket lookup and KB search.
 
 INSTRUMENTATION (Exercise 6 — optional):
   After each tool executes, call galileo_logger.add_tool_span(...) for explicit
-  span metadata beyond GalileoCallback auto-instrumentation.
+  span metadata beyond Splunk Agent Observability (Galileo) auto-instrumentation (GalileoCallback).
   Reference: ~/Desktop/galileo-golden-demo/domains/healthcare/tools/logic.py _log_tool_span
 """
 import json

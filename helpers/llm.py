@@ -3,7 +3,7 @@ LLM helper — chat model factory with readable span names.
 
 INSTRUMENTATION (Exercise 5):
   Pass name="IT Helpdesk Assistant" to ChatOllama / ChatOpenAI so LLM spans
-  are labeled clearly in Galileo.
+  are labeled clearly in Splunk Agent Observability (Galileo).
   Reference: ~/Desktop/galileo-golden-demo/helpers/llm_utils.py
 """
 import os
@@ -26,7 +26,7 @@ def get_chat_model(
 ) -> BaseChatModel:
     if provider == "hosted":
         resolved = model or os.environ.get("OPENAI_DEFAULT_CHAT_MODEL", "gpt-4o")
-        # INSTRUMENTATION (Exercise 5): ensure `name=` is set for Galileo LLM spans
+        # INSTRUMENTATION (Exercise 5): ensure `name=` is set for Splunk Agent Observability (Galileo) LLM spans
         return ChatOpenAI(
             model=resolved,
             temperature=temperature,
@@ -36,7 +36,7 @@ def get_chat_model(
 
     resolved = model or os.environ.get("OLLAMA_DEFAULT_CHAT_MODEL", "gemma4")
     base_url = os.environ.get("OLLAMA_BASE_URL", "http://localhost:11434")
-    # INSTRUMENTATION (Exercise 5): ensure `name=` is set for Galileo LLM spans
+    # INSTRUMENTATION (Exercise 5): ensure `name=` is set for Splunk Agent Observability (Galileo) LLM spans
     return ChatOllama(
         model=resolved,
         temperature=temperature,

@@ -2,7 +2,7 @@
 Environment setup — load secrets and set environment variables.
 
 INSTRUMENTATION (Exercise 1):
-  Wire Galileo env vars from .streamlit/secrets.toml so the SDK can export traces.
+  Wire Splunk Agent Observability (Galileo) env vars from .streamlit/secrets.toml so the SDK can export traces.
   Reference: ~/Desktop/galileo-golden-demo/setup_env.py lines 56–140
 """
 import os
@@ -40,7 +40,7 @@ def load_config(config_path: Optional[Path] = None) -> Dict[str, Any]:
 
 
 def setup_environment(config: Optional[Dict[str, Any]] = None) -> Dict[str, Any]:
-    """Load secrets and config; set process env vars for LLM + Galileo."""
+    """Load secrets and config; set process env vars for LLM + Splunk Agent Observability (Galileo)."""
     config = config or load_config()
     secrets_path = Path(__file__).parent / ".streamlit" / "secrets.toml"
 
