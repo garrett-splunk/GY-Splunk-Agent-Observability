@@ -97,9 +97,10 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 ### Step 12 — Use Signals
 
 - Prerequisites: scored traces from Step 10c
+- **Key message:** Metrics verify **known** failure modes (Acts 2–3); **Signals finds unknown unknowns** — patterns across the log stream you did not script or configure scorers for
 - Click **Log Stream Insights** / **Signals** on the log stream
 - Review insights panel: root cause + suggested fixes; click examples to jump to traces
-- Tie findings to Acts 2–3 (hallucination vs injection)
+- Tie findings to Acts 2–3 where relevant, but highlight insights that surface *new* issues beyond the demo
 - Optional: Splunk Agent Observability (Galileo) MCP for Cursor/VS Code
 
 ### Step 13 — Agent Control guardrails (optional)

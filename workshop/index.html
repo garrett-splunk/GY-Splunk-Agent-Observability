@@ -841,12 +841,20 @@ python scripts/validate_galileo_traces.py</code></pre>
           <span class="step-time">~10 min</span>
         </div>
         <h2>Use Signals (Log Stream Insights)</h2>
-        <p>After traces are scored (Steps 10–11), Splunk Agent Observability (Galileo) <strong>Signals</strong> analyzes your log stream and surfaces failure patterns, root causes, and suggested fixes — accelerating the eval engineering loop.</p>
+        <p>After traces are scored (Steps 10–11), Splunk Agent Observability (Galileo) <strong>Signals</strong> analyzes your log stream and surfaces failure patterns, root causes, and suggested fixes — including issues you did not script in the demo acts. That is where Signals shines: finding the <strong>unknown unknowns</strong>.</p>
+
+        <div class="callout callout--concept">
+          <p class="callout__title">Known failures vs unknown unknowns</p>
+          <div class="callout__body">
+            <p>Steps 7–9 and your SLM metrics (Step 10) are built around <strong>known</strong> failure modes — hallucination, prompt injection, tool misuse. You toggle scorers, run <strong>Compute</strong>, and verify expected scores on Act 2 and Act 3. That closes the loop on failures you already anticipate.</p>
+            <p><strong>Signals</strong> goes further: it scans patterns across <em>all</em> traces and metric results to surface problems you were not looking for — subtle prompt issues, recurring edge cases, inconsistent tool behavior, or quality regressions that no single dashboard filter would catch. Think of metrics as answering “did this trace fail the checks we configured?” and Signals as “what else is going wrong that we have not named yet?”</p>
+          </div>
+        </div>
 
         <div class="callout callout--concept">
           <p class="callout__title">Splunk → Splunk Agent Observability (Galileo): investigate trace quality</p>
           <div class="callout__body">
-            <p>Signals is like AI-assisted investigation on your trace data: instead of manually scanning hundreds of spans, Splunk Agent Observability (Galileo) classifies issues and suggests remediation (prompt changes, metric tuning, control rules). Run this <em>after</em> metrics are computed so insights can reference scorer results.</p>
+            <p>Signals is AI-assisted investigation on your trace data: instead of manually scanning hundreds of spans, Splunk Agent Observability (Galileo) classifies issues and suggests remediation (prompt changes, metric tuning, control rules). Run this <em>after</em> metrics are computed so insights can reference scorer results — including patterns beyond your lab’s three demo acts.</p>
             <p>Official: <a href="https://docs.galileo.ai/getting-started/sample-projects/simple-chatbot" target="_blank" rel="noopener">Simple Chatbot — Get insights</a></p>
           </div>
         </div>
@@ -867,9 +875,10 @@ python scripts/validate_galileo_traces.py</code></pre>
 
         <h3>Lab talking points</h3>
         <ul>
+          <li><strong>Unknown unknowns:</strong> Acts 2–3 are deliberate — Signals may still flag related issues (e.g. system prompt wording, retrieval gaps) you had not prioritized</li>
           <li><strong>Act 2:</strong> Connect hallucination findings to system prompt or retrieval grounding — Signals may suggest allowing the model to say “I don’t know”</li>
           <li><strong>Act 3:</strong> Connect injection patterns to input validation or Agent Control (Step 13)</li>
-          <li><strong>Act 1:</strong> Baseline healthy traces help Signals contrast failure modes</li>
+          <li><strong>Act 1:</strong> Baseline healthy traces help Signals contrast failure modes and spot drift in happy-path behavior</li>
         </ul>
 
         <div class="callout callout--info">
