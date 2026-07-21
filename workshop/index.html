@@ -94,7 +94,7 @@
         <h2>Architecture</h2>
         <div class="flow-diagram" role="img" aria-label="Assistant to Splunk Agent Observability (Galileo) data flow">
           <div class="flow-node">
-            <div class="flow-title">Streamlit UI</div>
+            <div class="flow-title">App UI</div>
             <div class="flow-sub">Chat + demo sidebar</div>
           </div>
           <div class="flow-arrow"><span>invoke</span></div>
@@ -126,7 +126,7 @@
           <tbody>
             <tr><td>Environment / org</td><td><strong>Project</strong></td><td>Container for one app or use case (<code>config.yaml</code> → <code>galileo.project</code>)</td></tr>
             <tr><td>Service or deployment slice</td><td><strong>Log stream</strong></td><td>Where traces land; metrics attach here (<code>galileo.log_stream</code>)</td></tr>
-            <tr><td>User session / browser tab</td><td><strong>Session</strong></td><td>One Streamlit tab’s conversation (<code>start_session</code> in Exercise 2)</td></tr>
+            <tr><td>User session / browser tab</td><td><strong>Session</strong></td><td>One app session’s conversation (<code>start_session</code> in Exercise 2)</td></tr>
             <tr><td>Trace (APM)</td><td><strong>Trace</strong></td><td>One user query end-to-end (<code>Run Agent</code> root span)</td></tr>
             <tr><td>Span (APM)</td><td><strong>Span</strong></td><td>LLM call, tool call, or retriever step inside a trace</td></tr>
             <tr><td>Platform-side evaluation / quality</td><td><strong>Metrics</strong> on log stream</td><td>Scorers (Context Adherence, Prompt Injection) run on ingested traces</td></tr>
@@ -171,7 +171,7 @@
           <li><a href="https://ollama.com/" target="_blank" rel="noopener">Ollama</a> with <code>gemma4</code> pulled — <strong>or</strong> OpenAI API key</li>
           <li>Splunk Agent Observability (Galileo) API key + access to Splunk Agent Observability (Galileo) console</li>
           <li>~500 MB disk for Python venv + dependencies</li>
-          <li>Ports <strong>8501</strong> (Streamlit app) and <strong>8095</strong> (this guide, optional) available</li>
+          <li>Ports <strong>8501</strong> (app) and <strong>8095</strong> (this guide, optional) available</li>
         </ul>
         <div class="callout callout--info">
           <p class="callout__title">Ollama quick check</p>
@@ -332,7 +332,7 @@ python3 -m http.server 8095
   project: "galileo-lab-it-helpdesk"   # your Splunk Agent Observability (Galileo) project name
   log_stream: "default"                # your log stream name</code></pre>
         </div>
-        <p><code>setup_env.py</code> reads these values into <code>GALILEO_PROJECT</code> and <code>GALILEO_LOG_STREAM</code>. Exercise 2 passes the same names to <code>GalileoLogger</code>. The Streamlit sidebar displays them once the app is running.</p>
+        <p><code>setup_env.py</code> reads these values into <code>GALILEO_PROJECT</code> and <code>GALILEO_LOG_STREAM</code>. Exercise 2 passes the same names to <code>GalileoLogger</code>. The app sidebar displays them once the app is running.</p>
 
         <h3>3.5 — Verify environment (Exercise 1c)</h3>
         <p>When the API key is set, <code>setup_env.py</code> loads project and log stream from <code>config.yaml</code>.</p>
@@ -353,7 +353,7 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
           <span class="step-time">~5 min</span>
         </div>
         <h2>Run the assistant</h2>
-        <p>Start Streamlit. The app works without instrumentation — traces appear after Steps 5–6.</p>
+        <p>Start the app. It works without instrumentation — traces appear after Steps 5–6.</p>
 
         <div class="code-block">
           <div class="code-block__header">
@@ -383,7 +383,7 @@ streamlit run app.py</code></pre>
         <div class="callout callout--concept">
           <p class="callout__title">Splunk → Splunk Agent Observability (Galileo): what Exercise 2 adds</p>
           <div class="callout__body">
-            <p><code>GalileoLogger</code> is the SDK client that sends telemetry — similar in role to initializing an OTEL tracer provider, but aimed at LLM-native spans. <code>start_session</code> groups traces from one Streamlit tab (like correlating a user session in APM).</p>
+            <p><code>GalileoLogger</code> is the SDK client that sends telemetry — similar in role to initializing an OTEL tracer provider, but aimed at LLM-native spans. <code>start_session</code> groups traces from one app session (like correlating a user session in APM).</p>
             <p>Official: <a href="https://docs.galileo.ai/sdk-api/logging/galileo-logger" target="_blank" rel="noopener">GalileoLogger reference</a> · Compare later: <a href="https://help.splunk.com/en/splunk-observability-cloud/observability-for-ai/splunk-ai-agent-monitoring/set-up-ai-agent-monitoring/code-based-instrumentation" target="_blank" rel="noopener">Splunk OTEL GenAI instrumentation</a></p>
           </div>
         </div>
@@ -468,13 +468,13 @@ streamlit run app.py</code></pre>
         st.session_state.galileo_session_started = True</code></pre>
         </div>
 
-        <p><strong>2e — Save and restart Streamlit</strong></p>
+        <p><strong>2e — Save and restart the app</strong></p>
         <div class="code-block">
           <div class="code-block__header">
             <span class="code-block__file">terminal</span>
             <button type="button" class="btn-copy" data-copy="cmd-ex2-restart">Copy</button>
           </div>
-          <pre><code id="cmd-ex2-restart"># In the terminal running Streamlit, press Ctrl+C, then:
+          <pre><code id="cmd-ex2-restart"># In the terminal running the app, press Ctrl+C, then:
 streamlit run app.py</code></pre>
         </div>
 
@@ -584,7 +584,7 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
         </div>
         <p class="muted"><code>agent.py</code> already calls these functions — no changes needed there (lines ~133–151).</p>
 
-        <p><strong>4d — Save and restart Streamlit</strong></p>
+        <p><strong>4d — Save and restart the app</strong></p>
         <div class="code-block">
           <div class="code-block__header">
             <span class="code-block__file">terminal</span>
@@ -730,7 +730,7 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
         <div class="callout callout--info">
           <p class="callout__title">Prerequisite</p>
           <div class="callout__body">
-            <p>You need at least one session in your log stream before <strong>Configure Metrics</strong> is available. Run Acts 1–3 in Streamlit (Steps 7–9) or <code>python scripts/validate_galileo_traces.py</code> first.</p>
+            <p>You need at least one session in your log stream before <strong>Configure Metrics</strong> is available. Run Acts 1–3 in the app (Steps 7–9) or <code>python scripts/validate_galileo_traces.py</code> first.</p>
           </div>
         </div>
 
@@ -748,6 +748,24 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
 
         <h3>10b — Apply metrics</h3>
         <p>In the Configure metrics pane, search or filter for each scorer below and <strong>toggle it on</strong>. When finished, click <strong>Save and close</strong>.</p>
+        <p>Choose the <strong>(SLM)</strong> variants — <strong>S</strong>mall <strong>L</strong>anguage <strong>M</strong>odel scorers powered by Galileo’s <strong>Luna</strong> model (the console may also show <strong>(SML)</strong> on some presets). Avoid the plain LLM-as-a-judge versions unless you intentionally want to score every trace with your own hosted LLM integration.</p>
+
+        <div class="callout callout--concept">
+          <p class="callout__title">Why Luna (SLM) instead of a traditional LLM judge?</p>
+          <div class="callout__body">
+            <p>Many quality and safety metrics can run as <strong>LLM-as-a-judge</strong> (send span text to GPT-class models and parse a verdict). That works for experiments, but at agent scale it is <strong>slow, expensive, and less deterministic</strong> — every evaluation is another multi-token generation with variable latency and cost.</p>
+            <p><strong>Luna</strong> is Galileo’s family of purpose-built <strong>SLMs</strong> for evaluation: fine-tuned for tasks like prompt injection, context adherence, and toxicity — not for open-ended chat. In production, Luna metrics are typically:</p>
+            <ul>
+              <li><strong>Faster</strong> — low enough latency for high-volume log streams and runtime guardrails (Step 13 reuses the same scorer)</li>
+              <li><strong>Cheaper</strong> — specialized heads on a shared backbone vs. calling a frontier LLM per span</li>
+              <li><strong>More consistent</strong> — evaluation-tuned models produce stable scores suitable for thresholds, dashboards, and controls</li>
+              <li><strong>Privacy-friendly</strong> — evaluations run in Galileo’s metric pipeline rather than routing every trace through your app’s LLM vendor</li>
+            </ul>
+            <p>In the UI you will often see <em>two</em> versions of the same metric — e.g. <strong>Prompt Injection</strong> (LLM judge) and <strong>Prompt Injection (SLM)</strong> (Luna). For this lab, toggle the <strong>(SLM)</strong> presets in the table below.</p>
+            <p>Official: <a href="https://docs.galileo.ai/concepts/luna/luna" target="_blank" rel="noopener">Luna-2 overview</a> · <a href="https://docs.galileo.ai/how-to-guides/luna/evaluate-with-luna/evaluate-with-luna" target="_blank" rel="noopener">Evaluate with Luna-2</a></p>
+          </div>
+        </div>
+
         <figure class="screenshot screenshot--full">
           <img class="screenshot__img" src="screenshots/apply.png" alt="Configure metrics pane with Prompt Injection, Context Adherence, and Chunk Attribution Utilization toggled on" loading="lazy" />
           <figcaption class="screenshot__caption">10b — Toggle on the workshop metrics, then <strong>Save and close</strong>.</figcaption>
@@ -767,14 +785,15 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
         </div>
 
         <h3>Minimum workshop set</h3>
+        <p>Toggle the <strong>(SLM)</strong> / Luna variants where available:</p>
         <table>
           <thead>
             <tr><th>Metric / scorer</th><th>Demo act</th><th>Why</th></tr>
           </thead>
           <tbody>
-            <tr><td><strong>Prompt Injection</strong> (SML)</td><td>Act 3</td><td>Flags injection chip payloads in LLM <code>input</code> even when the model responds safely</td></tr>
-            <tr><td><strong>Context Adherence</strong></td><td>Act 2</td><td>Detects hallucination trace where LLM output contradicts retriever context</td></tr>
-            <tr><td><strong>Chunk Attribution Utilization</strong></td><td>Act 2</td><td>Shows retrieved context was not used correctly in the LLM answer</td></tr>
+            <tr><td><strong>Prompt Injection (SLM)</strong></td><td>Act 3</td><td>Luna scorer flags injection chip payloads in LLM <code>input</code> even when the model responds safely</td></tr>
+            <tr><td><strong>Context Adherence (SLM)</strong></td><td>Act 2</td><td>Detects hallucination trace where LLM output contradicts retriever context</td></tr>
+            <tr><td><strong>Chunk Attribution Utilization (SLM)</strong></td><td>Act 2</td><td>Shows retrieved context was not used correctly in the LLM answer</td></tr>
           </tbody>
         </table>
 
@@ -795,7 +814,7 @@ from galileo.handlers.langchain import GalileoCallback</code></pre>
           <pre><code id="cmd-metrics-validate">source venv/bin/activate
 python scripts/validate_galileo_traces.py</code></pre>
         </div>
-        <p>Then run Acts 1–3 in Streamlit and refresh the log stream in Splunk Agent Observability (Galileo) (~30–60 seconds).</p>
+        <p>Then run Acts 1–3 in the app and refresh the log stream in Splunk Agent Observability (Galileo) (~30–60 seconds).</p>
       </section>
 
       <section id="step-verify">
@@ -808,7 +827,7 @@ python scripts/validate_galileo_traces.py</code></pre>
         <ul class="checklist">
           <li>Project matches <code>galileo.project</code> in <code>config.yaml</code></li>
           <li>Log stream matches <code>galileo.log_stream</code></li>
-          <li>Metrics enabled: Prompt Injection, Context Adherence, Chunk Attribution Utilization</li>
+          <li>Metrics enabled (SLM / Luna): Prompt Injection, Context Adherence, Chunk Attribution Utilization</li>
           <li>After <strong>Compute</strong> (Step 10c), metric scores visible on Act 2 and Act 3 traces</li>
           <li>Live agent trace: root → LLM → tool → LLM</li>
           <li>Hallucination trace: retriever + LLM mismatch; Context Adherence fails</li>
@@ -878,7 +897,7 @@ python scripts/validate_galileo_traces.py</code></pre>
         <h3>1. Enable in the lab</h3>
         <ol>
           <li><code>agent-control-sdk[galileo]</code> is already in <code>requirements.txt</code> — run <code>pip install -r requirements.txt</code></li>
-          <li>Set <code>galileo.enable_agent_control: true</code> in <code>config.yaml</code> and restart Streamlit</li>
+          <li>Set <code>galileo.enable_agent_control: true</code> in <code>config.yaml</code> and restart the app</li>
           <li>Optional: set <code>agent_control_agent_name</code> in <code>secrets.toml</code> (default: <code>it-helpdesk-assistant</code>)</li>
           <li>Sidebar should show <strong>Agent Control enabled</strong></li>
         </ol>
@@ -896,7 +915,7 @@ python scripts/validate_galileo_traces.py</code></pre>
             <tr><td>Execution environment</td><td>Server</td></tr>
             <tr><td>Step types</td><td>llm</td></tr>
             <tr><td>Evaluator path</td><td><code>input</code></td></tr>
-            <tr><td>Scorer label</td><td>Prompt Injection (SML)</td></tr>
+            <tr><td>Scorer label</td><td>Prompt Injection (SLM)</td></tr>
             <tr><td>Threshold</td><td>0.80</td></tr>
             <tr><td>Operator</td><td>gte</td></tr>
             <tr><td>Payload field</td><td>input</td></tr>
@@ -929,7 +948,7 @@ python scripts/validate_galileo_traces.py</code></pre>
             <tr><td>LLM spans, no tool spans</td><td>Attach callback in <code>agent.py</code> (Exercise 3)</td></tr>
             <tr><td>Ollama errors</td><td><code>ollama serve</code> and <code>ollama pull gemma4</code></td></tr>
             <tr><td>Hallucination button fails</td><td>API key, or <code>config.yaml</code> project/log_stream names do not match Splunk Agent Observability (Galileo) console</td></tr>
-            <tr><td>Traces in wrong project</td><td>Fix <code>galileo.project</code> / <code>log_stream</code> in <code>config.yaml</code>; restart Streamlit</td></tr>
+            <tr><td>Traces in wrong project</td><td>Fix <code>galileo.project</code> / <code>log_stream</code> in <code>config.yaml</code>; restart the app</td></tr>
           </tbody>
         </table>
       </section>

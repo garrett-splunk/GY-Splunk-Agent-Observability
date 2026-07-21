@@ -49,7 +49,7 @@ Adjust: skip Exercises 5–6 for shorter sessions; run hallucination demo even i
 - [ ] Participants know how to create a **Splunk Agent Observability (Galileo) project** and **log stream** (Step 3.3) and set names in `config.yaml` (Step 3.4)
 - [ ] Facilitator project ready — default `galileo-lab-it-helpdesk` / `default` or custom names documented for the room
 - [ ] Repo cloned locally (`GY-Splunk-Agent-Observability` or equivalent path)
-- [ ] Log stream metrics enabled via Configure Metrics UI (Step 10): Prompt Injection, Context Adherence, Chunk Attribution Utilization; Compute backfill run
+- [ ] Log stream metrics enabled via Configure Metrics UI (Step 10): **(SLM)** Prompt Injection, Context Adherence, Chunk Attribution Utilization; Compute backfill run
 
 ---
 
@@ -84,10 +84,11 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 
 - Run Acts 1–3 first (or `validate_galileo_traces.py`) so the log stream has sessions
 - **10a:** Log stream → **Configure Metrics** (top right) — see `workshop/screenshots/configure-metrics.png`
-- **10b:** Toggle on Prompt Injection (Act 3), Context Adherence + Chunk Attribution (Act 2) → **Save and close** — see `apply.png`
+- **10b:** Toggle on **(SLM)** presets — Small Language Model scorers via **Luna** (not LLM-as-a-judge). Prompt Injection, Context Adherence, and Chunk Attribution for Acts 3 / 2 — see `apply.png`
+- **Luna talking point:** SLM metrics are faster, cheaper, and more consistent at scale than calling a frontier LLM to judge every span; same Luna scorer backs Step 13 Agent Control
 - **10c:** Click **Compute** to score existing traces from lab prompts — see `compute.png`
 - Validate export: `python scripts/validate_galileo_traces.py`
-- Official: [Configure log stream metrics](https://docs.galileo.ai/concepts/logging/configure-metrics/configure-metrics)
+- Official: [Configure log stream metrics](https://docs.galileo.ai/concepts/logging/configure-metrics/configure-metrics) · [Luna-2 overview](https://docs.galileo.ai/concepts/luna/luna)
 
 ### Step 11 — Verify in Splunk Agent Observability (Galileo)
 
@@ -103,8 +104,8 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 
 ### Step 13 — Agent Control guardrails (optional)
 
-- `galileo.enable_agent_control: true` in `config.yaml`; restart Streamlit
-- Splunk Agent Observability (Galileo) UI → Controls → create and attach `block-prompt-injection` (PRE, Deny, Prompt Injection SML ≥ 0.80)
+- `galileo.enable_agent_control: true` in `config.yaml`; restart the app
+- Splunk Agent Observability (Galileo) UI → Controls → create and attach `block-prompt-injection` (PRE, Deny, Prompt Injection SLM ≥ 0.80)
 - Demo: Act 3 observe-only (control off) → enable control → replay Act 3 → block message + evaluation span
 
 ### Act 1 — Happy path (Step 7)
@@ -133,7 +134,7 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 | Symptom | Fix |
 |---------|-----|
 | `ModuleNotFoundError: toml` | `pip install -r requirements.txt` |
-| Sidebar: Splunk Agent Observability (Galileo) not configured | Add `galileo_api_key` to secrets.toml, restart Streamlit |
+| Sidebar: Splunk Agent Observability (Galileo) not configured | Add `galileo_api_key` to secrets.toml, restart the app |
 | Ollama connection error | `ollama serve`, `ollama pull gemma4` |
 | No agent traces | Complete Exercises 2–4; check callback flags |
 | Hallucination fails, chat works | API key missing, or `config.yaml` project/log_stream names do not match Splunk Agent Observability (Galileo) console |
@@ -147,7 +148,7 @@ python -c "from setup_env import setup_environment; setup_environment(); import 
 For customers interested in **blocking** not just observing:
 
 1. `pip install -r requirements.txt` (includes `agent-control-sdk[galileo]`)
-2. Set `galileo.enable_agent_control: true` in `config.yaml`; restart Streamlit
+2. Set `galileo.enable_agent_control: true` in `config.yaml`; restart the app
 3. Splunk Agent Observability (Galileo) UI → log stream → **Controls** → create and attach `block-prompt-injection` (golden demo README ~470–484)
 4. Demo script: Act 3 with control disabled (observe) → enable control → replay Act 3 → deny span + Agent Control evaluation
 
