@@ -6,7 +6,7 @@ galileo:
   project: "GY-IT-Helpdesk-Demo"
   log_stream: "default"
   # Phase 2: set true after creating block-prompt-injection control in Splunk Agent Observability (Galileo) UI
-  enable_agent_control: false
+  enable_agent_control: true
 
 ui:
   app_title: "IT Helpdesk Assistant Lab"

@@ -55,6 +55,7 @@ def init_agent_control(
 
     session_key = (agent_name, project_name, log_stream, server_url)
     if not force and getattr(init_agent_control, "_last_session_key", None) == session_key:
+        agent_control.refresh_controls()
         return True
 
     try:
@@ -81,6 +82,7 @@ def init_agent_control(
         target_id=log_stream_data.id,
         steps=IT_HELPDESK_AGENT_CONTROL_STEPS,
     )
+    agent_control.refresh_controls()
     _initialized = True
     init_agent_control._last_session_key = session_key
     print(
